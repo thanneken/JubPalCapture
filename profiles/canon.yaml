@@ -1,0 +1,7 @@
+sensor: CanonT1i
+lens: CanonEFS18_55
+aperture: F5.0
+cool: NoCool
+gain: ISO400
+basepath: /home/thanneken/Pictures
+lights: Octopus

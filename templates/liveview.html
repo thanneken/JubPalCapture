@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="Author" content=" Todd R. Hanneken">
+		<title>Live View</title>
+		<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}"/>
+	</head>
+	<body>
+		<h1>Live View</h1>
+		<form action="" method="post">
+			<input type="radio" name="scope" value="full" id="full" {% if scope == 'full' %}checked{% endif %}/>
+			<label for="full">Full Frame</label>
+			<input type="radio" name="scope" value="detail" id="detail" {% if scope == 'detail' %}checked{% endif %}/>
+			<label for="detail">Detail</label>
+			<div>
+				<input type="range" id="roiYPct" name="roiYPct" min="0" max="1" value="{{roiYPct}}" step="0.1" />
+				<label for="roiY">Vertical</label>
+			</div>
+			<div>
+				<input type="range" id="roiXPct" name="roiXPct" min="0" max="1" value="{{roiXPct}}" step="0.1" />
+				<label for="roiX">Horizontal</label>
+			</div>
+			<div>
+				<input type="range" id="scale" name="scale" min="0.1" max="1" value="{{scale}}" step="0.1"/>
+				<label for="scale">Scale</label>
+			</div>
+			<div>
+				<input type="range" id="exposure" name="exposure" min="1" max="1000" value="{{exposure}}" step="10"/>
+				<label for="exposure">Exposure</label>
+			</div>
+			<div>
+				<input type="submit" value="Change" name="Change"/>
+				<input type="submit" value="Stop" name="Stop"/>
+			</div>
+		</form>
+
+		{% if system == 'webcam' %}
+			<img src="{{ url_for('feedWebcam') }}" alt="Live View"/>
+		{% elif system == 'qhy' %}
+			<img src="{{ url_for('feedQhy') }}" alt="Live View"/>
+		{% else %}
+			<p>Unable to identify system for video feed</p>
+		{% endif %}
+
+	</body>
+</html>
+

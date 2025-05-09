@@ -1,0 +1,8 @@
+sensor: QHYmini
+lens: CanonEFS18_55
+aperture: F5
+cool: -20
+gain: 78
+basepath: /home/thanneken/Pictures
+lights: Overhead
+

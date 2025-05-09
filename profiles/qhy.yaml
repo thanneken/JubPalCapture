@@ -1,0 +1,7 @@
+sensor: QHY600
+lens: Milvus50
+aperture: F2
+cool: -5
+gain: 26
+basepath: /home/thanneken/Pictures
+lights: Overhead
