@@ -300,9 +300,7 @@ class qhyccd():
 		self.light = light
 		self.wheel = wheel
 		self.exposure = exposure
-		print("Setting exposure to %s"%(self.exposure))
 		self.SetExposure(int(self.exposure)) 
-		print("Capturing image")
 		img = self.GetSingleFrame()
 		print("Image has shape and type %s %s"%(img.shape,img.dtype))
 		print("Numpy object has shape %s, dtype %s, range %s - %s, standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.std(img)))

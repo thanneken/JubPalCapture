@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 import argparse
-from datetime import datetime
 from multiprocessing import Process
-import numpy as np
-from os import makedirs, path
-from skimage import io
-import time
 import yaml
+import lights
+# from datetime import datetime
+# import numpy as np
+# from os import makedirs, path
+# from skimage import io
+import time
 
 def getArguments():
 	parser = argparse.ArgumentParser()
@@ -20,16 +21,16 @@ if __name__ == "__main__":
 	print("Gathering arguments from the command line")
 	args = getArguments()
 	if args.configuration and args.configuration.lower().endswith('.yaml'):
-		with open('profiles'+args.configuration,'r') as unparsedyaml:
+		with open(args.configuration,'r') as unparsedyaml:
 			config = yaml.load(unparsedyaml,Loader=yaml.SafeLoader)
 	else:
 		print("It is necessary to specify a configuration file")
 		exit()
 	if args.shotlist and args.shotlist.lower().endswith('.yaml'): # makes sense to use yaml for config and txt for shotlist
-		with open ('shotlists'+args.shotlist,'r') as unparsedyaml:
+		with open (args.shotlist,'r') as unparsedyaml:
 			shotlist = yaml.load(unparsedyaml,Loader=yaml.SafeLoader)
 	elif args.shotlist and args.shotlist.lower().endswith('txt'):
-		with open ('shotlists'+args.shotlist,'r') as unparsedtxt:
+		with open (args.shotlist,'r') as unparsedtxt:
 			shotlist = unparsedtxt.readlines()
 	else: 
 		print("It is necessary to specify a shotlist file")
@@ -48,13 +49,17 @@ if __name__ == "__main__":
 	print("Camera initialized")
 	if args.verbose:
 		camera.showInfo()
-	print("Initializing lights")
-	if config['lights'].lower().startswith('octopus'):
-		from lights import Octopus as lights
+	print("Initializing light array")
+	if config['lights'].lower() == 'octopusbluetooth':
+	 	lightArray = lights.OctopusBluetooth()
+	elif config['lights'].lower().startswith('octopus'):
+		lightArray = lights.Octopus()
+		print("Giving the Octopus another 2 seconds to open")
+		time.sleep(2)
 	elif config['lights'].lower().startswith('overhead'):
-		from lights import Overhead as lights
+		lightArray = lights.Overhead()
 	elif config['lights'].lower().startswith('misha'):
-		from lights import Misha as lights
+		lightArray = lights.Misha
 	print("Starting shot list")
 	for shot in shotlist:
 		if shot.strip() == "":
@@ -63,11 +68,12 @@ if __name__ == "__main__":
 		print("Light = %s | Wheel = %s | Exposure = %s"%(light,wheel,exposure))
 		exposure = exposure.strip('ms')
 		camera.setWheel(wheel)
-		lightProcess = Process(target=lights.on,args=(lights,light,exposure)) 
+		lightProcess = Process(target=lightArray.on,args=(light,exposure)) 
 		lightProcess.start()
+		time.sleep(0.5) # Give the lights a head start
+		print("Shooting!\a")
 		camera.shoot(light,wheel,exposure)
 		lightProcess.join()
-	print("It's been fun, thanks for all the tacos!")
-	lights.close()
+	lightArray.close()
 	camera.close()
 

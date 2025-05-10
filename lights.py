@@ -1,15 +1,66 @@
 import time
 
-class Overhead:
+class Octopus: # Arduino is the default Octopus, specify 2023 or Bluetooth for variants
 	def __init__(self):
-		print("No lights to initialize...")
+		import serial
+		import serial.tools.list_ports
+		self.port0 = (0,9)
+		self.test = (0,9) # format is port, octopus index where 9 is all octopodes
+		self.testRight = (0,0)
+		self.testLeft = (0,1)
+		self.port1 = (1,9)
+		self.white6500 = (1,9)
+		self.white6500Right = (1,0)
+		self.white6500Left = (1,1)
+		self.port2 = (2,9)
+		self.white2800 = (2,9)
+		self.white2800Right = (2,0)
+		self.white2800Left = (2,1)
+		self.port3 = (3,9)
+		self.uv385 = (3,9)
+		self.port4 = (4,9)
+		self.uv405 = (4,9)
+		self.port5 = (5,9)
+		self.blue475 = (5,9)
+		self.port6 = (6,9)
+		self.ir850 = (6,9)
+		self.port7 = (7,9)
+		self.ir940 = (7,9)
+		self.port8 = (8,9)
+		self.raking = (8,9)
+		self.rakingRight = (8,0)
+		self.rakingLeft = (8,1)
+		self.octopodes = []
+		ports = serial.tools.list_ports.comports()
+		for port in ports:
+			if "USB to UART Bridge Controller" in port.description:
+				octopus = serial.Serial(port.device,115200)
+				if not octopus.isOpen():
+					octopus.open()
+				self.octopodes.append(octopus) # octopus comparable to self.led_connection
+				print("Connected to %s %s"%(port.name,port.description))
 	def on(self,light,exposure):
-		exposure = int(exposure.strip('ms'))
-		if light == "NoLight":
-			print("Waiting...")
-			time.sleep(exposure/1000)
-	def close():
-		pass
+		port = getattr(self,light)
+		try:
+			for num, octopus in enumerate(self.octopodes): 
+				if port[1] > 8 or port[1] == num:
+					print("Asking Octopus index %s to turn on port %s for light %s for %s milliseconds"%(num,port[0],light,exposure))
+					octopus.write((port[0]+48).to_bytes(1)) # octopus interprets integer 0-8 as turn on that port; add 48 because
+		except:
+			print("Failure trying to write command %s-%s"%(port[0],port[1]))
+		time.sleep(int(exposure)/1000)
+		if True:
+			print("Lights: adding two seconds on-time to help synchronize")
+			time.sleep(2) 
+		try:
+			for octopus in self.octopodes: 
+				octopus.write(int(58).to_bytes(1)) # octopus interprets a number greater than known ports (1 internal, 8 ports) as all off; add 48
+		except:
+			print("Failure trying to write command 10 for all off")
+	def close(self):
+		for octopus in self.octopodes:
+			print("Closing",octopus.name)
+			octopus.close()
 
 class Misha:
 	def __init__(self):
@@ -33,6 +84,17 @@ class Misha:
 		self.led_connection.write('0,0\n'.encode())
 	def close(self):
 		self.led_connection.close()
+
+class Overhead:
+	def __init__(self):
+		print("No lights to initialize...")
+	def on(self,light,exposure):
+		exposure = int(exposure.strip('ms'))
+		if light == "NoLight":
+			print("Waiting...")
+			time.sleep(exposure/1000)
+	def close():
+		pass
 
 class Octopus2023:
 	class Ports:
@@ -61,63 +123,6 @@ class Octopus2023:
 			mcp.spi_exchange([0x40,0x0A,0xFF],cs_pin_number=4)
 	def close(self):
 		pass
-
-class OctopusArduino:
-	def __init__(self):
-		import serial
-		import serial.tools.list_ports
-		self.port0 = (0,9)
-		self.test = (0,9) # format is port, octopus index where 9 is all octopodes
-		self.testLeft = (0,0)
-		self.testRight = (0,1)
-		self.port1 = (1,9)
-		self.white6500 = (1,9)
-		self.white6500Left = (1,0)
-		self.white6500Right = (1,1)
-		self.port2 = (2,9)
-		self.white2800 = (2,9)
-		self.white2800Left = (2,0)
-		self.white2800Right = (2,1)
-		self.port3 = (3,9)
-		self.uv385 = (3,9)
-		self.port4 = (4,9)
-		self.uv405 = (4,9)
-		self.port5 = (5,9)
-		self.blue475 = (5,9)
-		self.port6 = (6,9)
-		self.ir850 = (6,9)
-		self.port7 = (7,9)
-		self.ir940 = (7,9)
-		self.port8 = (8,9)
-		self.raking = (8,9)
-		self.octopodes = []
-		ports = serial.tools.list_ports.comports()
-		for port in ports:
-			if "USB to UART Bridge Controller" in port.description:
-				octopus = serial.Serial(port.device,115200)
-				if not octopus.isOpen():
-					octopus.open()
-				self.octopodes.append(octopus) # octopus comparable to self.led_connection
-				print("Connected to %s %s"%(port.name,port.description))
-	def on(self,light,exposure):
-		port = getattr(self,light)
-		try:
-			for num, octopus in enumerate(self.octopodes): 
-				if port[1] > 8 or port[1] == num:
-					print("Asking Octopus index %s to turn on port %s for light %s for %s milliseconds"%(num,port[0],light,exposure))
-					octopus.write((port[0]+48).to_bytes(1)) # octopus interprets integer 0-8 as turn on that port; add 48 because
-		except:
-			print("Failure trying to write command %s-%s"%(port[0],port[1]))
-		time.sleep(exposure/1000)
-		try:
-			for octopus in self.octopodes: 
-				octopus.write(int(58).to_bytes(1)) # octopus interprets a number greater than known ports (1 internal, 8 ports) as all off; add 48
-		except:
-			print("Failure trying to write command 10 for all off")
-	def close(self):
-		for octopus in self.octopodes:
-			print("Closing",octopus.name)
-			octopus.close()
 
 class OctopusBluetooth:
 	def __init__(self):
