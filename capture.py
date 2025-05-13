@@ -64,6 +64,8 @@ if __name__ == "__main__":
 	for shot in shotlist:
 		if shot.strip() == "":
 			continue
+		if shot.strip().startswith('log:'):
+			continue
 		light,wheel,exposure = shot.strip().split(sep='-')
 		print("Light = %s | Wheel = %s | Exposure = %s"%(light,wheel,exposure))
 		exposure = exposure.strip('ms')

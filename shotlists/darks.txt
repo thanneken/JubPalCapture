@@ -1,2 +1,11 @@
-NoLight-NoFilter-1000ms
-NoLight-NoFilter-30000ms
+NoLight-NoFilter-100ms
+NoLight-NoFilter-200ms
+NoLight-NoFilter-400ms
+NoLight-NoFilter-800ms
+NoLight-NoFilter-1600ms
+NoLight-NoFilter-3200ms
+NoLight-NoFilter-6400ms
+NoLight-NoFilter-12800ms
+NoLight-NoFilter-25600ms
+NoLight-NoFilter-51200ms
+NoLight-NoFilter-102400ms

@@ -303,7 +303,7 @@ class qhyccd():
 		self.SetExposure(int(self.exposure)) 
 		img = self.GetSingleFrame()
 		print("Image has shape and type %s %s"%(img.shape,img.dtype))
-		print("Numpy object has shape %s, dtype %s, range %s - %s, standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.std(img)))
+		print("Numpy object has shape %s, dtype %s, range %s - %s, median %s with standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.median(img),np.std(img)))
 		directory = path.join(self.config['basepath'],self.target,'Raw')
 		if not path.exists(directory):
 			makedirs(directory)

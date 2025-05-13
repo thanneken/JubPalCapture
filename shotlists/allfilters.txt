@@ -1,7 +1,0 @@
-Overhead-NoFilter-12ms
-Overhead-WrattenBlue98-125ms
-Overhead-WrattenGreen61-50ms
-Overhead-WrattenRed25-40ms
-Overhead-WrattenInfrared87-500ms
-Overhead-WrattenInfrared87C-1500ms
-
