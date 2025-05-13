@@ -1,0 +1,12 @@
+ir850-WrattenBlue98-1311ms
+ir940-WrattenBlue98-4273ms
+ir850-WrattenGreen61-1256ms
+ir940-WrattenGreen61-4562ms
+ir850-WrattenRed25-1092ms
+ir940-WrattenRed25-4220ms
+uv385-WrattenInfrared87-30000ms
+uv405-WrattenInfrared87-30000ms
+blue475-WrattenInfrared87-30000ms
+uv385-WrattenInfrared87C-30000ms
+uv405-WrattenInfrared87C-30000ms
+blue475-WrattenInfrared87C-30000ms

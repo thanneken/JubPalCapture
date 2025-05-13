@@ -1,0 +1,4 @@
+white6500-WrattenInfrared87-30000ms
+white6500-WrattenInfrared87C-30000ms
+white2800-WrattenInfrared87-30000ms
+white2800-WrattenInfrared87C-30000ms
