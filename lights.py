@@ -93,8 +93,8 @@ class Overhead:
 		if light == "NoLight":
 			print("Waiting...")
 			time.sleep(exposure/1000)
-	def close():
-		pass
+	def close(self):
+		print("No need to close the overhead lights")
 
 class Octopus2023:
 	class Ports:

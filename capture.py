@@ -46,6 +46,10 @@ if __name__ == "__main__":
 	elif config['sensor'].lower().startswith('canon'):
 		from libcanon import Canon 
 		camera = Canon(config,args.target)
+	elif config['sensor'].lower().startswith('flir'):
+		from libflir import Flir
+		camera = Flir()
+		camera.session(config,args.target)
 	print("Camera initialized")
 	if args.verbose:
 		camera.showInfo()
