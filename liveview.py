@@ -26,8 +26,8 @@ def initializeQhy():
 	global camera,exposure,binXY,roiX,roiY,width,height,roiW,roiH,cameraName
 	if not camera:
 		exposure = 16
-		import qhyccd 
-		camera = qhyccd.qhyccd()
+		import libqhy 
+		camera = libqhy.Qhyccd()
 		camera.connect(1) # 1 is stream, 0 is single frame
 		cameraName = bytes(camera.id).decode()
 		if cameraName.startswith('QHYminiCam'):

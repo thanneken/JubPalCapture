@@ -40,8 +40,8 @@ if __name__ == "__main__":
 		exit()
 	print("Initializing camera")
 	if config['sensor'].lower().startswith('qhy'):
-		import qhyccd 
-		camera = qhyccd.qhyccd()
+		import libqhy 
+		camera = libqhy.Qhyccd()
 		camera.session(config,args.target)
 	elif config['sensor'].lower().startswith('canon'):
 		from libcanon import Canon 
@@ -64,6 +64,8 @@ if __name__ == "__main__":
 		lightArray = lights.Overhead()
 	elif config['lights'].lower().startswith('misha'):
 		lightArray = lights.Misha
+	elif config['lights'].lower().startswith('nolight'):
+		lightArray = lights.Overhead()
 	print("Starting shot list")
 	for shot in shotlist:
 		if shot.strip() == "":
