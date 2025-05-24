@@ -5,12 +5,13 @@ import cv2
 from threading import Thread
 from math import floor
 
-global height,width,scale,roiY,roiH,roiX,roiW,camera,gracefulStop,exposure,roiYPct,roiXPct
+global height,width,scale,roiY,roiH,roiX,roiW,camera,gracefulStop,exposure,roiYPct,roiXPct,filterwheel
 camera = False
 gracefulStop = False
 scale = float(1)
 roiYPct = float(0.5)
 roiXPct = float(0.5)
+filterwheel = 'NoFilter'
 
 def initializeWebcam():
 	global camera #,width,height
@@ -23,7 +24,7 @@ def initializeWebcam():
 		ret = camera.set(cv2.CAP_PROP_FRAME_WIDTH,width)
 
 def initializeQhy(): 
-	global camera,exposure,binXY,roiX,roiY,width,height,roiW,roiH,cameraName
+	global camera,exposure,binXY,roiX,roiY,width,height,roiW,roiH,cameraName,filterwheel
 	if not camera:
 		exposure = 16
 		import libqhy 
@@ -36,22 +37,25 @@ def initializeQhy():
 			width = 3856
 			binXY = 2 
 			camera.SetGain(78)  # factory was 30, 78 on demo and appears to be optimal point on graphs
-			camera.setWheel(2) # slot 1 is blackout
+			roiX = 0
+			roiY = 0
 		else:
 			print("Applying settings for QHY 600")
-			height = 6422
-			width = 9600
-			binXY = 4
 			camera.SetGain(26)
-			camera.setWheel(7) 
-		roiX = 0
-		roiY = 0
+			height = 6388 # could get this from camera after set bin mode
+			width = 9576
+			binXY = 4
+			roiX = 24
+			roiY = 0
+		camera.setWheel(filterwheel) 
+		roiX = floor(roiX/binXY)
+		roiY = floor(roiY/binXY)
 		roiW = floor(width/binXY)
 		roiH = floor(height/binXY)
 		camera.SetBit(8)
-		camera.SetExposure(int(exposure/(binXY**2)))
 		camera.SetBinMode(binXY,binXY) 
 		camera.SetROI(roiX,roiY,roiW,roiH)
+		camera.SetExposure(int(exposure/(binXY**2)))
 
 def closeWebcam():
 	global camera,gracefulStop
@@ -136,7 +140,7 @@ def webcamlive():
 def qhylive():
 	system='qhy'
 	scope = 'full'
-	global scale,roiYPct,roiXPct,roiY,roiH,roiX,roiW,gracefulStop,camera,width,height,exposure,binXY,cameraName
+	global scale,roiYPct,roiXPct,roiY,roiH,roiX,roiW,gracefulStop,camera,width,height,exposure,binXY,cameraName,filterwheel
 	if request.method == 'POST':
 		scope = request.form.get('scope')
 		if request.form.get('Stop') == 'Stop':
@@ -159,6 +163,9 @@ def qhylive():
 			camera.SetROI(roiX,roiY,roiW,roiH)
 			exposure = int(request.form.get('exposure'))
 			camera.SetExposure(int(exposure/(binXY**2)))
+			if request.form.get('filterwheel') != filterwheel:
+				filterwheel = request.form.get('filterwheel')
+				camera.setWheel(filterwheel) 
 			scale = float(request.form.get('scale'))
 		elif scope == 'detail':
 			if not camera:
@@ -175,6 +182,9 @@ def qhylive():
 			camera.SetROI(roiX,roiY,roiW,roiH)
 			exposure = int(request.form.get('exposure'))
 			camera.SetExposure(int(exposure/(binXY**2)))
+			if request.form.get('filterwheel') != filterwheel:
+				filterwheel = request.form.get('filterwheel')
+				camera.setWheel(filterwheel) 
 		else: 
 			print("UNANTICIPATED SITUATION")
 			closeQhy()
@@ -182,7 +192,7 @@ def qhylive():
 	elif request.method == 'GET':
 		exposure = 32
 		pass
-	return render_template('liveview.html',scale=scale,system=system,exposure=exposure,roiYPct=roiYPct,roiXPct=roiXPct,scope=scope) 
+	return render_template('liveview.html',scale=scale,system=system,exposure=exposure,roiYPct=roiYPct,roiXPct=roiXPct,scope=scope,filterwheel=filterwheel) 
 
 @app.route('/webcam/feed')
 def feedWebcam():

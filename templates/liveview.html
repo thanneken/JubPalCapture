@@ -10,10 +10,20 @@
 	<body>
 		<h1>Live View</h1>
 		<form action="" method="post">
-			<input type="radio" name="scope" value="full" id="full" {% if scope == 'full' %}checked{% endif %}/>
-			<label for="full">Full Frame</label>
-			<input type="radio" name="scope" value="detail" id="detail" {% if scope == 'detail' %}checked{% endif %}/>
-			<label for="detail">Detail</label>
+			<div>
+				<input type="radio" name="filterwheel" value="NoFilter" id="NoFilter" {%if filterwheel== 'NoFilter' %}checked{% endif %}/>
+				<label for="NoFilter">No Filter</label>
+				<input type="radio" name="filterwheel" value="WrattenInfrared87C" id="WrattenInfrared87C" {%if filterwheel== 'WrattenInfrared87C' %}checked{% endif %}/>
+				<label for="WrattenInfrared87C">Wratten Infrared87C</label>
+				<input type="radio" name="filterwheel" value="WrattenBlue98" id="WrattenBlue98" {%if filterwheel== 'WrattenBlue98' %}checked{% endif %}/>
+				<label for="WrattenBlue98">WrattenBlue98</label>
+			</div>
+			<div>
+				<input type="radio" name="scope" value="full" id="full" {% if scope == 'full' %}checked{% endif %}/>
+				<label for="full">Full Frame</label>
+				<input type="radio" name="scope" value="detail" id="detail" {% if scope == 'detail' %}checked{% endif %}/>
+				<label for="detail">Detail</label>
+			</div>
 			<div>
 				<input type="range" id="roiYPct" name="roiYPct" min="0" max="1" value="{{roiYPct}}" step="0.1" />
 				<label for="roiY">Vertical</label>
