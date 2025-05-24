@@ -16,7 +16,7 @@ def createmediandarkfile(basepath,darkmedianfile):
     camera = fields[1]
     gain = fields[4]
     exposure = fields[7]
-    filemask = os.path.join(basepath,'LensCap','Raw','LensCap-'+camera+'-NoLens-FNone-'+gain+'-NoLight-NoFilter-'+exposure+'-*.tif')
+    filemask = os.path.join(basepath,'LensCap','Raw','LensCap-'+camera+'-*-F*-'+gain+'-*-*-'+exposure+'-*.tif')
     darklist = glob.glob(filemask)
     if len(darklist) == 0:
         if verbose > 0:
@@ -55,7 +55,7 @@ def createdarksubtractedfile(basepath,targetfile):
     camera = fields[1]
     gain = fields[4]
     exposure = fields[7]
-    filemask = os.path.join(basepath,'LensCap','Median','LensCap-'+camera+'-NoLens-FNone-'+gain+'-NoLight-NoFilter-'+exposure+'-*.tif')
+    filemask = os.path.join(basepath,'LensCap','Median','LensCap-'+camera+'-*-F*-'+gain+'-NoLight-NoFilter-'+exposure+'-*.tif')
     medianlist = glob.glob(filemask)
     if len(medianlist) == 0:
         if verbose > 2:
