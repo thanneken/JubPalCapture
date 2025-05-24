@@ -261,6 +261,9 @@ class Qhyccd():
 			time.sleep(5)
 			wheelCurrentPosition = self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_CFWPORT)
 		elif bytes(self.id).decode().startswith('QHYminiCam'):
+			print("Restore the pause when put filters in minicam")
+			wheelCurrentPosition = wheelNewPosition
+		elif bytes(self.id).decode().startswith('QHYminiCam'):
 			print("Waiting 8 seconds for miniCam wheel to move")
 			time.sleep(8)
 			wheelCurrentPosition = wheelNewPosition
