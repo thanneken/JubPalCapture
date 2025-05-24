@@ -290,8 +290,12 @@ class Qhyccd():
 		self.exposure = exposure
 		self.SetExposure(int(self.exposure)) 
 		img = self.GetSingleFrame()
-		print("Image has shape and type %s %s"%(img.shape,img.dtype))
-		print("Numpy object has shape %s, dtype %s, range %s - %s, median %s with standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.median(img),np.std(img)))
+        if False:
+            print("Image has shape and type %s %s"%(img.shape,img.dtype))
+            print("Numpy object has shape %s, dtype %s, range %s - %s, median %s with standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.median(img),np.std(img)))
+        if True:
+            saturatedpct = 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img)
+            print(f"Pixel values range {np.min(img)} - {np.max(img)} with 98th percentile of {np.percentile(img,98) and {saturatedpct:.1f}% of pixels above 64000")
 		directory = path.join(self.config['basepath'],self.target,'Raw')
 		if not path.exists(directory):
 			makedirs(directory)
