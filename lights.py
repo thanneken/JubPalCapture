@@ -61,6 +61,23 @@ class Octopus: # Arduino is the default Octopus, specify 2023 or Bluetooth for v
 		for octopus in self.octopodes:
 			print("Closing",octopus.name)
 			octopus.close()
+    def manualon(self,light):
+		port = getattr(self,light)
+		try:
+			for num, octopus in enumerate(self.octopodes): 
+				if port[1] > 8 or port[1] == num:
+					print("Asking Octopus index %s to turn on port %s for light %s for %s milliseconds"%(num,port[0],light,exposure))
+					octopus.write((port[0]+48).to_bytes(1)) # octopus interprets integer 0-8 as turn on that port; add 48 because
+		except:
+			print("Failure trying to write command %s-%s"%(port[0],port[1]))
+        print(f"Light {light} is on. It will not turn off unless you use the function manualoff() to turn off all lights")
+    def manualoff(self):
+		try:
+			for octopus in self.octopodes: 
+				octopus.write(int(58).to_bytes(1)) # octopus interprets a number greater than known ports (1 internal, 8 ports) as all off; add 48
+		except:
+			print("Failure trying to write command 10 for all off")
+        print("Successfully issued command to turn off all lights")
 
 class Misha:
 	def __init__(self):
