@@ -10,12 +10,12 @@ class Octopus: # Arduino is the default Octopus, specify 2023 or Bluetooth for v
 		self.testLeft = (0,1)
 		self.port1 = (1,9)
 		self.white6500 = (1,9)
-		self.white6500Right = (1,0)
-		self.white6500Left = (1,1)
+		self.white6500Right = (1,1)
+		self.white6500Left = (1,0)
 		self.port2 = (2,9)
 		self.white2800 = (2,9)
-		self.white2800Right = (2,0)
-		self.white2800Left = (2,1)
+		self.white2800Right = (2,1)
+		self.white2800Left = (2,0)
 		self.port3 = (3,9)
 		self.uv385 = (3,9)
 		self.port4 = (4,9)
@@ -28,8 +28,8 @@ class Octopus: # Arduino is the default Octopus, specify 2023 or Bluetooth for v
 		self.ir940 = (7,9)
 		self.port8 = (8,9)
 		self.raking = (8,9)
-		self.rakingRight = (8,0)
-		self.rakingLeft = (8,1)
+		self.rakingRight = (8,1)
+		self.rakingLeft = (8,0)
 		self.octopodes = []
 		ports = serial.tools.list_ports.comports()
 		for port in ports:
@@ -61,23 +61,23 @@ class Octopus: # Arduino is the default Octopus, specify 2023 or Bluetooth for v
 		for octopus in self.octopodes:
 			print("Closing",octopus.name)
 			octopus.close()
-    def manualon(self,light):
+	def manualon(self,light):
 		port = getattr(self,light)
 		try:
 			for num, octopus in enumerate(self.octopodes): 
 				if port[1] > 8 or port[1] == num:
-					print("Asking Octopus index %s to turn on port %s for light %s for %s milliseconds"%(num,port[0],light,exposure))
+					print("Asking Octopus index %s to turn on port %s for light %s indefinately"%(num,port[0],light))
 					octopus.write((port[0]+48).to_bytes(1)) # octopus interprets integer 0-8 as turn on that port; add 48 because
+					print(f"Light {light} is on. It will not turn off unless you use the function off() to turn off all lights")
 		except:
 			print("Failure trying to write command %s-%s"%(port[0],port[1]))
-        print(f"Light {light} is on. It will not turn off unless you use the function manualoff() to turn off all lights")
-    def manualoff(self):
+	def off(self):
 		try:
 			for octopus in self.octopodes: 
 				octopus.write(int(58).to_bytes(1)) # octopus interprets a number greater than known ports (1 internal, 8 ports) as all off; add 48
+				print("Successfully issued command to turn off all lights")
 		except:
 			print("Failure trying to write command 10 for all off")
-        print("Successfully issued command to turn off all lights")
 
 class Misha:
 	def __init__(self):
@@ -193,7 +193,6 @@ class OctopusBluetooth:
 		for result in results:
 			services = result.services()
 			for service in services:
-				# print(f"    Service UUID: {service.uuid()}") 
 				if service.uuid() == self.serviceuuid:
 					self.octopodes.append(result) 
 		try:
