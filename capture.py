@@ -73,13 +73,12 @@ if __name__ == "__main__":
 		if shot.strip().startswith('log:'):
 			continue
 		light,wheel,exposure = shot.strip().split(sep='-')
-		print("Light = %s | Wheel = %s | Exposure = %s"%(light,wheel,exposure))
 		exposure = exposure.strip('ms')
 		camera.setWheel(wheel)
 		lightProcess = Process(target=lightArray.on,args=(light,exposure)) 
 		lightProcess.start()
 		time.sleep(0.5) # Give the lights a head start
-		print("Shooting!\a")
+		print("\aShooting Light = %s | Wheel = %s | Exposure = %s"%(light,wheel,exposure))
 		camera.shoot(light,wheel,exposure)
 		lightProcess.join()
 	lightArray.close()

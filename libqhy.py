@@ -16,6 +16,7 @@ class Filters:
 
 class Qhyccd():
 	def __init__(self):
+		self.reports = []
 		self.x = c_uint()
 		self.y = c_uint()
 		self.w = c_uint()
@@ -103,7 +104,7 @@ class Qhyccd():
 		# sdk exposure uses us as unit
 		self.exposureMS = exposureMS # input ms
 		self.sdk.SetQHYCCDParam(self.cam, CONTROL_ID.CONTROL_EXPOSURE, c_double(exposureMS*1000))
-		print("Set exposure to",self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_EXPOSURE)/1000)
+		# print("Set exposure to",self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_EXPOSURE)/1000)
 
 	""" Set camera gain """
 	def SetGain(self, gain):
@@ -145,9 +146,11 @@ class Qhyccd():
 	""" Relase camera and close sdk """
 	def close(self):
 		print("Closing %s"%(bytes(self.id).decode()))
+		for report in self.reports:
+			print(f"{report['light']:-<10}{report['wheel']:-<10}{report['exposure']:->5}ms pixel values range {report['min']:>5} - {report['max']:5} with 98th percentile of {report['percentile98']:>5.0f} and {report['saturatedpct']:>3.1f}% of pixels above 64000")
 		self.sdk.CloseQHYCCD(self.cam)
 		self.sdk.ReleaseQHYCCDResource()
-    
+
 	def GetExtraInfo(self):
 		print("Getting extra info")
 		self.versionYear = c_uint32()
@@ -214,7 +217,7 @@ class Qhyccd():
 		self.sensorName = (c_char * 32)()
 		self.sdk.GetQHYCCDSensorName(self.cam,byref(self.sensorName))
 		print("Sensor name is %s"%(bytes(self.sensorName).decode()))
-    
+
 	def CheckAllParameters(self):
 		self.controlMin = c_double()
 		self.controlMax = c_double()
@@ -288,17 +291,23 @@ class Qhyccd():
 		self.CheckAllParameters()
 
 	def shoot(self,light,wheel,exposure):
-		self.light = light
-		self.wheel = wheel
-		self.exposure = exposure
-		self.SetExposure(int(self.exposure)) 
+		self.SetExposure(int(exposure)) 
 		img = self.GetSingleFrame()
-        if False:
-            print("Image has shape and type %s %s"%(img.shape,img.dtype))
-            print("Numpy object has shape %s, dtype %s, range %s - %s, median %s with standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.median(img),np.std(img)))
-        if True:
-            saturatedpct = 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img)
-            print(f"Pixel values range {np.min(img)} - {np.max(img)} with 98th percentile of {np.percentile(img,98) and {saturatedpct:.1f}% of pixels above 64000")
+		if False:
+			print("Image has shape and type %s %s"%(img.shape,img.dtype))
+			print("Numpy object has shape %s, dtype %s, range %s - %s, median %s with standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.median(img),np.std(img)))
+		if True:
+			report = {
+				"light":light,
+				"wheel":wheel,
+				"exposure":exposure,
+				'saturatedpct': 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img),
+				'min':np.min(img),
+				'max':np.max(img),
+				'percentile98':np.percentile(img,98)
+			}
+			print(f"{report['light']:-<10}{report['wheel']:-<10}{report['exposure']:->5}ms pixel values range {report['min']:>5} - {report['max']:5} with 98th percentile of {report['percentile98']:>5.0f} and {report['saturatedpct']:>3.1f}% of pixels above 64000")
+			self.reports.append(report)
 		directory = path.join(self.config['basepath'],self.target,'Raw')
 		if not path.exists(directory):
 			makedirs(directory)
@@ -314,9 +323,9 @@ class Qhyccd():
 			self.config['lens'],
 			self.config['aperture'],
 			gainDesc,
-			self.light,
-			self.wheel,
-			str(self.exposure)+'ms',
+			light,
+			wheel,
+			str(exposure)+'ms',
 			timestamp+'.'+fileExtension])
 		outfilePath = path.join(directory,outfileName)
 		print("Saving %s"%(outfilePath))

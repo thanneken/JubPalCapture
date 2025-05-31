@@ -1,7 +1,8 @@
 sensor: QHY600
-lens: Milvus50
-aperture: F11
+lens: NoLens
+aperture: FNone
 cool: -15
 gain: 26
 basepath: /home/thanneken/Pictures
-lights: Octopus
+lights: NoLights
+

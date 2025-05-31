@@ -108,7 +108,6 @@ class Overhead:
 	def on(self,light,exposure):
 		exposure = int(exposure.strip('ms'))
 		if light == "NoLight":
-			print("Waiting...")
 			time.sleep(exposure/1000)
 	def close(self):
 		print("No need to close the overhead lights")
@@ -129,7 +128,6 @@ class Octopus2023:
 		mcp.spi_exchange([0x40,0x0A,0xFF], cs_pin_number=4) # all lights off (voltage high to current controllers)
 	def on(self,light,exposure):
 		if light == "NoLight":
-			print("Waiting...")
 			time.sleep(exposure/1000)
 		else:
 			print("Turning on light %s for %s"%(light,exposure))
