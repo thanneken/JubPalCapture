@@ -25,7 +25,7 @@ def generate_histogram(inpath,outpath):
     img = np.reshape(img,-1)
     if verbose:
         print("Image has %s pixels ranging from %s to %s with a median of %s and standard deviation of %s"%(img.shape[0],np.min(img),np.max(img),int(np.median(img)),int(np.std(img))))
-    if 'LensCap-QHYmini' in inpath:
+    if 'LensCap-QHYmini' in inpath or 'LensCap-Canon' in inpath:
         range = (0,2**12-1)
     elif 'LensCap-' in inpath:
         range = (0,2**10-1)
@@ -38,7 +38,7 @@ def generate_histogram(inpath,outpath):
         range = None
     plt.clf()
     plt.hist(img,bins=256,range=range)
-    plt.tick_params(axis='y',labelleft=False)
+		# plt.tick_params(axis='y',labelleft=False)
     plt.margins(x=0)
     plt.savefig(outpath)
 

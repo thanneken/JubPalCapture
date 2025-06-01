@@ -90,7 +90,7 @@ def createdarksubtractedfile(basepath,targetfile):
     if np.min(darksubtractedimage) <= 0:
         darksubtractedimage = darksubtractedimage - formermin + (1/2**bpp) 
     if np.max(darksubtractedimage) > 1:
-        darksubtractedimage = np.clip(darksubtractedimage,a_max=1) 
+        darksubtractedimage = np.clip(darksubtractedimage,a_min=None,a_max=1) 
     if bpp == 8:
         darksubtractedimage = img_as_byte(darksubtractedimage)
     else:

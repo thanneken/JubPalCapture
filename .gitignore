@@ -6,3 +6,4 @@ instance/
 .webassets-cache
 
 test.txt
+*.swp

@@ -1,0 +1,8 @@
+sensor: CanonT1i
+lens: CanonEFS55_250
+aperture: F11
+cool: NoCool
+gain: ISO400
+basepath: /home/thanneken/Pictures
+lights: NoLights
+
