@@ -1,6 +1,6 @@
 sensor: CanonT1i
-lens: CanonEFS18_55
-aperture: F5.0
+lens: Milvus50
+aperture: F11
 cool: NoCool
 gain: ISO400
 basepath: /home/thanneken/Pictures

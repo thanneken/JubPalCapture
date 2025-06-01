@@ -1,6 +1,7 @@
 import edsdk
 import time
 import rawpy
+import numpy as np
 from datetime import datetime
 from io import BytesIO
 from os import makedirs, path
@@ -179,6 +180,7 @@ class Canon:
 						timestamp+'.'+fileExtension])
 				outfilePath = path.join(directory,outfileName)
 				io.imsave(path.join(directory,outfilePath),raw.raw_image.copy(),check_contrast=False)
+				print(f"98th percentile of raw image is {np.percentile(raw.raw_image.copy(),98)}")
 				half_size=True # each 2x2 block becomes one pixel in each of three channels without interpolation
 				no_auto_bright=True # see https://letmaik.github.io/rawpy/api/rawpy.Params.html and https://www.libraw.org/docs/API-datastruct-eng.html
 				no_auto_scale=True # Not as artificial as auto_bright
