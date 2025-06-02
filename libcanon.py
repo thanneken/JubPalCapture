@@ -7,6 +7,10 @@ from io import BytesIO
 from os import makedirs, path
 from skimage import io
 from edsdk import (CameraCommand, ObjectEvent, FileCreateDisposition, Access, EdsObject, PropID, PropertyEvent, SaveTo, ISOSpeedCamera, AEMode, AFMode, Av, Tv, ImageQuality)
+
+verbose = 4
+exposureGoal = 0.85*2**14 # possibly different for R7
+
 class Canon:
 		copyPicture = False # this is to copy the file from the SD card, not create a numpy object from image data
 		buildNumpyImage = True
@@ -24,6 +28,7 @@ class Canon:
 		# 1/1000, 1/1250, 1/1500, 1/1600, 1/2000, 1/2500, 1/3000, 1/3200, 1/4000, 1/5000, 1/6000, 1/6400, 1/8000, 1/10000, 1/12800, 1/16000
 		# not using third stops: 20\" (1/3), 10\" (1/3), 6\" (1/3), 0\"3 (1/3), 1/6 (1/3), 1/10 (1/3), 1/20 (1/3)
 		def __init__(self,config,target):
+			self.reports = []
 			self.config = config
 			self.target = target
 			print("Initializing...")
@@ -64,22 +69,18 @@ class Canon:
 				self.exposure = exposure
 				self.exposure = int(self.exposure.strip('ms'))
 				if not self.exposure in self.milliseconds:
-						print("Exposure time %s ms does not translate exactly to fractions of a second recognized by Canon"%(self.exposure))
 						self.exposure = min(self.milliseconds.keys(),key=lambda k: abs(k-self.exposure))
-						print("Rounding to %s ms, or %s seconds"%(self.exposure,self.milliseconds[self.exposure]))
-				print("Setting exposure time to %s"%(self.exposure))
+						print("Rounding to %s ms, or %s seconds"%(self.exposure,self.milliseconds[self.exposure])) if verbose > 1 else None
+				print("Setting exposure time to %s"%(self.exposure)) if verbose > 4 else None
 				waitForCamera = self.exposure/1000 + 5 # at four failed on 30sec exposure
 				edsdk.SetPropertyData(self.camera,PropID.Tv,0,self.codeLookup(self.milliseconds[self.exposure]))
 				edsdk.GetEvent()
-				print("Taking a picture")
-				width = 4752 # for purposes of calculating memory to reserve
-				height = 3168 # not super precise because of compression
+				width = 6960 # for purposes of calculating memory to reserve, 4752 on t1i, 6960 on r7
+				height = 4640 # not super precise because of compression, 3168 on t1i, 4640 on r7
 				imageData = bytes(width*height*2) # 1 for 8-bit, 2 for 16-bit, 3 for three channels of 8-bit	.... won't need all that space because compressed
 				self.memStream = edsdk.CreateMemoryStreamFromPointer(imageData)
 				edsdk.SendCommand(self.camera,CameraCommand.TakePicture,0)
-				print("Waiting %s seconds"%(waitForCamera))
 				time.sleep(waitForCamera)
-				print("Asking camera for events")
 				edsdk.GetEvent()
 				if False:
 						with rawpy.imread(BytesIO(imageData)) as raw:
@@ -88,6 +89,8 @@ class Canon:
 				with rawpy.imread(BytesIO(imageData)) as raw: 
 						self.saveRawFunction(raw) 
 		def close(self):
+				for report in self.reports:
+					print(report)
 				print("Closing camera session")
 				edsdk.CloseSession(self.camera)
 				print("Terminating software development kit")
@@ -110,14 +113,14 @@ class Canon:
 						print("Recognized exposure times are: 30\",25\",20\",20\" (1/3),15\",13\",10\",10\" (1/3),8\",6\" (1/3),6\",5\",4\",3\"2,3,2\"5,2,1\"6,1\"5,1\"3,1,0\"8,0\"7,0\"6,0\"5,0\"4,0\"3,0\"3 (1/3),1/4,1/5,1/6,1/6 (1/3),1/8,1/10 (1/3),1/10,1/13,1/15,1/20 (1/3),1/20,1/25,1/30,1/40,1/45,1/50,1/60,1/80,1/90,1/100,1/125,1/160,1/180,1/200,1/250,1/320,1/350,1/400,1/500,1/640,1/750,1/800,1/1000,1/1250,1/1500,1/1600,1/2000,1/2500,1/3000,1/3200,1/4000,1/5000,1/6000,1/6400,1/8000,1/10000,1/12800,1/16000")
 						exit()
 		def callback_object(self,event:ObjectEvent,object_handle:EdsObject): 
-				print("Object event! Event %s created object %s"%(ObjectEvent(event).name,object_handle))
+				print("Object event! Event %s created object %s"%(ObjectEvent(event).name,object_handle)) if verbose > 4 else None
 				if event == ObjectEvent.DirItemCreated:
-						print("Directory item created on the camera")
+						print("Directory item created on the camera") if verbose > 4 else None
 						if self.copyPicture:
-								print("Ready to copy file from camera to Pictures directory")
+								print("Ready to copy file from camera to Pictures directory") if verbose > 4 else None
 								self.copy_image(object_handle)
 						if self.buildNumpyImage:
-								print("Ready to build numpy image")
+								print("Ready to build numpy image") if verbose > 4 else None
 								self.buildNumpyFunction(object_handle)
 		def copy_image(self,object_handle): 
 				fileExtension = 'cr2'
@@ -148,23 +151,21 @@ class Canon:
 				edsdk.Download(object_handle, dir_item_info["size"], out_stream)
 				edsdk.DownloadComplete(object_handle)
 		def buildNumpyFunction(self,object_handle): 
-				print("Got here!")
 				dir_item_info = edsdk.GetDirectoryItemInfo(object_handle)
-				print("Note: ObjectFormat 10874880 = 0xA5F000 = Canon Raw")
-				print("Copying image data from camera SD card to RAM with size %s"%(dir_item_info["size"]))
+				print("Note: ObjectFormat 10874880 = 0xA5F000 = Canon Raw") if verbose > 4 else None
+				print("Copying image data from camera SD card to RAM with size %s"%(dir_item_info["size"])) if verbose > 4 else None
 				edsdk.Download(object_handle,dir_item_info["size"],self.memStream)
-				print("Download Complete")
+				print("Download Complete") if verbose > 5 else None
 				edsdk.DownloadComplete(object_handle)
 		def saveRawFunction(self,raw):
 				bayerChannels = {0:'BayerR',1:'BayerG',2:'BayerB'}
-				print("Saving very raw file")
 				directory = path.join(self.config['basepath'],self.target,'Raw')
 				if not path.exists(directory):
 						makedirs(directory)
 				timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 				fileExtension = 'tif'
 				self.wheel = 'BayerRGGB'
-				if self.config['cool']:
+				if 'cool' in self.config:
 						gainDesc = 'gain'+str(self.config['gain'])+'_'+str(self.config['cool']).strip('-')
 				else:
 						gainDesc = 'gain'+str(self.config['gain'])
@@ -180,17 +181,19 @@ class Canon:
 						timestamp+'.'+fileExtension])
 				outfilePath = path.join(directory,outfileName)
 				io.imsave(path.join(directory,outfilePath),raw.raw_image.copy(),check_contrast=False)
-				print(f"98th percentile of raw image is {np.percentile(raw.raw_image.copy(),98)}")
+				report = f">>> {self.light:<15} 98th percentile of raw image is {np.percentile(raw.raw_image.copy(),98):>5.0f} after {self.exposure:>5.0f}, consider {exposureGoal*self.exposure/np.percentile(raw.raw_image.copy(),98):5.0f}"
+				print(report)
+				self.reports.append(report)
 				half_size=True # each 2x2 block becomes one pixel in each of three channels without interpolation
 				no_auto_bright=True # see https://letmaik.github.io/rawpy/api/rawpy.Params.html and https://www.libraw.org/docs/API-datastruct-eng.html
 				no_auto_scale=True # Not as artificial as auto_bright
 				gamma=(1,1) # None for default setting of power = 2.222 and slope = 4.5; (1,0) for linear; when power is 1 it does not matter if slope is 1 or 0
 				output_bps=16 # 8 or 16 bits per sample
-				print("Settings:\n\thalf_size: %s\n\tno_auto_bright: %s\n\tno_auto_scale: %s\n\tgamma (power, slope): %s\n\toutput_bps: %s"%(half_size,no_auto_bright,no_auto_scale,gamma,output_bps))
+				print("Settings:\n\thalf_size: %s\n\tno_auto_bright: %s\n\tno_auto_scale: %s\n\tgamma (power, slope): %s\n\toutput_bps: %s"%(half_size,no_auto_bright,no_auto_scale,gamma,output_bps)) if verbose > 4 else None
 				raw = raw.postprocess(half_size=half_size,no_auto_bright=no_auto_bright,gamma=gamma,no_auto_scale=no_auto_scale,output_bps=output_bps)
 				height,width,channels = raw.shape
-				print("Processed image is %s pixels high, %s pixels wide, and %s channels deep with each pixel described with %s data"%(height,width,channels,raw.dtype))
-				if self.config['cool']:
+				print("Processed image is %s pixels high, %s pixels wide, and %s channels deep with each pixel described with %s data"%(height,width,channels,raw.dtype)) if verbose > 4 else None
+				if 'cool' in self.config:
 						gainDesc = 'gain'+str(self.config['gain'])+'_'+str(self.config['cool']).strip('-')
 				else:
 						gainDesc = 'gain'+str(self.config['gain'])

@@ -1,7 +1,6 @@
 sensor: CanonT1i
 lens: Milvus50
 aperture: F11
-cool: NoCool
 gain: ISO400
 basepath: /home/thanneken/Pictures
 lights: Octopus
