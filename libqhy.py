@@ -145,9 +145,12 @@ class Qhyccd():
 
 	""" Relase camera and close sdk """
 	def close(self):
-		print("Closing %s"%(bytes(self.id).decode()))
 		for report in self.reports:
-			print(f"{report['light']:-<10}{report['wheel']:-<10}{report['exposure']:->5}ms pixel values range {report['min']:>5} - {report['max']:5} with 98th percentile of {report['percentile98']:>5.0f} and {report['saturatedpct']:>3.1f}% of pixels above 64000")
+			print(report)
+		print("Closing %s"%(bytes(self.id).decode()))
+		if False:
+			for report in self.reports:
+				print(f"{report['light']:-<10}{report['wheel']:-<10}{report['exposure']:->5}ms pixel values range {report['min']:>5} - {report['max']:5} with 98th percentile of {report['percentile98']:>5.0f} and {report['saturatedpct']:>3.1f}% of pixels above 64000")
 		self.sdk.CloseQHYCCD(self.cam)
 		self.sdk.ReleaseQHYCCDResource()
 
@@ -297,16 +300,11 @@ class Qhyccd():
 			print("Image has shape and type %s %s"%(img.shape,img.dtype))
 			print("Numpy object has shape %s, dtype %s, range %s - %s, median %s with standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.median(img),np.std(img)))
 		if True:
-			report = {
-				"light":light,
-				"wheel":wheel,
-				"exposure":exposure,
-				'saturatedpct': 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img),
-				'min':np.min(img),
-				'max':np.max(img),
-				'percentile98':np.percentile(img,98)
-			}
-			print(f"{report['light']:-<10}{report['wheel']:-<10}{report['exposure']:->5}ms pixel values range {report['min']:>5} - {report['max']:5} with 98th percentile of {report['percentile98']:>5.0f} and {report['saturatedpct']:>3.1f}% of pixels above 64000")
+			exposureGoal = 0.85*2**16
+			suggestion = exposureGoal*int(exposure)/np.percentile(img,98)
+			saturatedpct: 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img),
+			report = f"{light:-<10}{wheel:-<10}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
+			print(report)
 			self.reports.append(report)
 		directory = path.join(self.config['basepath'],self.target,'Raw')
 		if not path.exists(directory):
