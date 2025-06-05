@@ -43,6 +43,14 @@ class Qhyccd():
 		self.sdk.SetQHYCCDParam(self.cam, CONTROL_ID.CONTROL_USBTRAFFIC, c_double(50))
 		self.SetBit(16)
 		self.SetBinMode(1,1) # also includes effective pixel area adjustment (drop overscan)
+		if bytes(self.id).decode().startswith('QHYminiCam'):
+			self.SetReadMode(1) # mini read mode 1 is LinearityHDR
+			self.SetOffset(30) # mini offset starts at 30 (factory default?)
+		elif bytes(self.id).decode().startswith('QHY600'):
+			self.SetReadMode(0) # 600 read mode 0 is photographic
+			self.SetOffset(30) # 600 offset starts at 30 (factory default?)
+		else:
+			print("Not how to set read mode or offset for this camera")
 		self.SetROI(self.x.value, self.y.value, self.w.value, self.h.value) 
 		print("Setting gain to %s"%(self.config['gain']))
 		self.SetGain(self.config['gain'])
@@ -106,6 +114,13 @@ class Qhyccd():
 		self.sdk.SetQHYCCDParam(self.cam, CONTROL_ID.CONTROL_EXPOSURE, c_double(exposureMS*1000))
 		# print("Set exposure to",self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_EXPOSURE)/1000)
 
+	def SetReadMode(self,readmode):
+		self.sdk.SetQHYCCDReadMode(self.cam,readmode)
+		print(f"Read mode set to index {readmode}")
+
+	def SetOffset(self,offset):
+		self.sdk.SetQHYCCDParam(self.cam, CONTROL_ID.CONTROL_OFFSET, c_double(offset))
+	
 	""" Set camera gain """
 	def SetGain(self, gain):
 		self.sdk.SetQHYCCDParam(self.cam, CONTROL_ID.CONTROL_GAIN, c_double(gain))
