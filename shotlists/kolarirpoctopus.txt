@@ -1,0 +1,2 @@
+white6500-Kolari850_BayerRGGB-400ms
+ir850-Kolari850_BayerRGGB-400ms

@@ -50,6 +50,13 @@ if __name__ == "__main__":
 		from libflir import Flir
 		camera = Flir()
 		camera.session(config,args.target)
+	elif config['sensor'].lower().startswith('kolarielph'):
+		from libchdk import Chdk
+		camera = Chdk()
+		camera.session(config,args.target)
+	else:
+		print("Not sure which camera to initialize")
+		exit()
 	print("Camera initialized")
 	if args.verbose:
 		camera.showInfo()
@@ -73,7 +80,7 @@ if __name__ == "__main__":
 		if shot.strip().startswith('log:'):
 			continue
 		light,wheel,exposure = shot.strip().split(sep='-')
-		exposure = exposure.strip('ms')
+		exposure = int(exposure.strip('ms'))
 		camera.setWheel(wheel)
 		lightProcess = Process(target=lightArray.on,args=(light,exposure)) 
 		lightProcess.start()

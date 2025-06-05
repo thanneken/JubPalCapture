@@ -56,18 +56,19 @@ class Canon:
 				print("Image Quality is %s"%(ImageQuality(edsdk.GetPropertyData(self.camera,PropID.ImageQuality,0)).name))
 				print("Save To setting is %s"%(SaveTo(edsdk.GetPropertyData(self.camera,PropID.SaveTo,0)).name))
 				edsdk.GetEvent()
-		def setWheel(self,wheel):
+		def setWheel(self,wheel): 
 				if wheel == 'NoFilter':
-						print("No filter besides built-in Bayer RGGB")
+					print("No filter besides built-in Bayer RGGB (preferred to specify filter as -BayerRGGB-)")
 				elif wheel == 'BayerRGGB':
-						print("No filter besides built-in Bayer RGGB")
+					print("No filter besides built-in Bayer RGGB")
+				elif wheel.lower().endswith('_bayerrggb'):
+					print(f"Filter setting {wheel} is descriptive, not prescriptive")
 				else:
-						print("Canon cameras do not have software controlled filter wheels. Settings are descriptive, not prescriptive. Set filter to NoFilter if appropriate.")
+					print("Canon cameras do not have software controlled filter wheels. Settings are descriptive, not prescriptive. Set filter to BayerRGGB if appropriate.")
 		def shoot(self,light,wheel,exposure):
 				self.light = light
 				self.wheel = wheel
 				self.exposure = exposure
-				self.exposure = int(self.exposure.strip('ms'))
 				if not self.exposure in self.milliseconds:
 						self.exposure = min(self.milliseconds.keys(),key=lambda k: abs(k-self.exposure))
 						print("Rounding to %s ms, or %s seconds"%(self.exposure,self.milliseconds[self.exposure])) if verbose > 1 else None
@@ -128,7 +129,7 @@ class Canon:
 				if not path.exists(directory):
 						makedirs(directory)
 				timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-				self.wheel = 'BayerRGGB'
+				# self.wheel = 'BayerRGGB'
 				if self.config['cool']:
 						gainDesc = 'gain'+str(self.config['gain'])+'_'+str(self.config['cool']).strip('-')
 				else:
@@ -164,7 +165,7 @@ class Canon:
 						makedirs(directory)
 				timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 				fileExtension = 'tif'
-				self.wheel = 'BayerRGGB'
+				# wheel = 'BayerRGGB'
 				if 'cool' in self.config:
 						gainDesc = 'gain'+str(self.config['gain'])+'_'+str(self.config['cool']).strip('-')
 				else:
@@ -189,16 +190,13 @@ class Canon:
 				no_auto_scale=True # Not as artificial as auto_bright
 				gamma=(1,1) # None for default setting of power = 2.222 and slope = 4.5; (1,0) for linear; when power is 1 it does not matter if slope is 1 or 0
 				output_bps=16 # 8 or 16 bits per sample
+				adjust_maximum_thr = 0.0 # no observed effect
 				print("Settings:\n\thalf_size: %s\n\tno_auto_bright: %s\n\tno_auto_scale: %s\n\tgamma (power, slope): %s\n\toutput_bps: %s"%(half_size,no_auto_bright,no_auto_scale,gamma,output_bps)) if verbose > 4 else None
-				raw = raw.postprocess(half_size=half_size,no_auto_bright=no_auto_bright,gamma=gamma,no_auto_scale=no_auto_scale,output_bps=output_bps)
+				raw = raw.postprocess(half_size=half_size,no_auto_bright=no_auto_bright,gamma=gamma,no_auto_scale=no_auto_scale,output_bps=output_bps,adjust_maximum_thr=adjust_maximum_thr)
 				height,width,channels = raw.shape
 				print("Processed image is %s pixels high, %s pixels wide, and %s channels deep with each pixel described with %s data"%(height,width,channels,raw.dtype)) if verbose > 4 else None
-				if 'cool' in self.config:
-						gainDesc = 'gain'+str(self.config['gain'])+'_'+str(self.config['cool']).strip('-')
-				else:
-						gainDesc = 'gain'+str(self.config['gain'])
 				for channel in range(channels):
-						self.wheel = bayerChannels[channel]
+						wheel = self.wheel.strip('BayerRGGB')+bayerChannels[channel]
 						outfileName = '-'.join([
 								self.target,
 								self.config['sensor'],
@@ -206,7 +204,7 @@ class Canon:
 								self.config['aperture'],
 								gainDesc,
 								self.light,
-								self.wheel,
+								wheel,
 								str(self.exposure)+'ms',
 								timestamp+'.'+fileExtension])
 						outfilePath = path.join(directory,outfileName)

@@ -99,6 +99,13 @@ class Misha:
 		self.led_connection.write((light + ',100\n').encode()) # wavelength,intensity(on a scale of 100)\n
 		time.sleep(exposure/1000)
 		self.led_connection.write('0,0\n'.encode())
+	def manualon(self,light):
+		if light not in ['365','385','395','420','450','470','500','530','560','590','615','630','660','730','850','940']:
+			print("I don't think Misha light panels will understand your request for light %s, but we can try…"%(light))
+		print("Turning on light %s"%(light))
+		self.led_connection.write((light + ',100\n').encode()) # wavelength,intensity(on a scale of 100)\n
+	def off(self):
+		self.led_connection.write('0,0\n'.encode())
 	def close(self):
 		self.led_connection.close()
 
