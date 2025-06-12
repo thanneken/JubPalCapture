@@ -54,6 +54,10 @@ if __name__ == "__main__":
 		from libchdk import Chdk
 		camera = Chdk()
 		camera.session(config,args.target)
+	elif config['sensor'].lower().startswith('pixelink'):
+		from libpixelink import Pixelink
+		camera = Pixelink()
+		camera.session(config,args.target)
 	else:
 		print("Not sure which camera to initialize")
 		exit()
