@@ -50,6 +50,10 @@
 			<img src="{{ url_for('feedWebcam') }}" alt="Live View"/>
 		{% elif system == 'qhy' %}
 			<img src="{{ url_for('feedQhy') }}" alt="Live View"/>
+		{% elif system == 'pixelink' %}
+			<img src="{{ url_for('feedPixelink') }}" alt="Live View"/>
+		{% elif system == 'flir' %}
+			<img src="{{ url_for('feedFlir') }}" alt="Live View"/>
 		{% else %}
 			<p>Unable to identify system for video feed</p>
 		{% endif %}

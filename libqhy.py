@@ -151,6 +151,8 @@ class Qhyccd():
 		""" Return live image """
 		self.sdk.GetQHYCCDLiveFrame(self.cam, byref(self.roi_h), byref(self.roi_w), 
 			byref(self.bpp), byref(self.channels), self.imgdata)
+		if False:
+			print(f"LIBQHY: Sending live frame with max value {np.max(self.imgdata)}")
 		return np.asarray(self.imgdata)
 
 	def StopLive(self):

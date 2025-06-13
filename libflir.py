@@ -16,8 +16,19 @@ class Flir():
 		pass
 	def BeginLive():
 		pass
+
 	def GetLiveFrame():
-		pass
+		image_result = self.camera.GetNextImage()
+		while image_result.IsIncomplete():
+			print("Waiting for complete image")
+			time.sleep(1)
+			image_result = self.camera.GetNextImage()
+		img = image_result.GetNDArray()
+		image_result.Release()
+		if self.rotate:
+			np.rot90(img,2)
+		return img
+
 	def __init__(self):
 		print("Initializing Flir Camera")
 		self.rotate = False
@@ -42,14 +53,22 @@ class Flir():
 		node_newestonly = node_bufferhandling_mode.GetEntryByName('NewestOnly')
 		node_newestonly_mode = node_newestonly.GetValue()
 		node_bufferhandling_mode.SetIntValue(node_newestonly_mode)
+
 	def session(self,config,target): 
 		print("Configuring session")
 		self.config = config
 		self.target = target
-		self.camera.Gain.SetValue(int(config['gain']))
+		if 'gain' in config:
+			self.camera.Gain.SetValue(int(config['gain']))
+		if 'bpp' in config:
+			self.SetBit(self,config['bpp'])
+		else:
+			self.SetBit(self,16)
+
 	def showInfo(self):
 		print("Width in pixels: %s"%(self.camera.Width.GetMax()))
 		print("Height in pixels: %s"%(self.camera.Height.GetMax()))
+
 	def shoot(self,light,wheel,exposure):
 		self.camera.ExposureTime.SetValue(int(exposure)*1000)
 		print("Shooting for %sms"%(exposure))
@@ -85,6 +104,7 @@ class Flir():
 		outfilePath = path.join(directory,outfileName)
 		print("Saving %s"%(outfilePath))
 		io.imsave(outfilePath,img,check_contrast=False)
+
 	def close(self):
 		print("Closing Flir camera")
 		if self.camera is not None:
@@ -99,19 +119,29 @@ class Flir():
 		if self.system is not None:
 			self.system.ReleaseInstance()
 			self.system = None
+
 	def setWheel(self,wheelNewPosition): 
 		print("No wheel to set")
+
 	def SetROI(self,roiX,roiY,roiW,roiH):
+		print(f"Changing ROI to x,y,w,h = {roiX},{roiY},{roiW},{roiH}")
 		self.camera.OffsetX.SetValue(roiX)
 		self.camera.OffsetY.SetValue(roiY)
 		self.camera.Height.SetValue(roiH)
 		self.camera.Width.SetValue(roiW)
+
 	def SetBit(self,bpp):
-		print("Received request to set bit depth per pixel to %s. I don't know how to do that."%(bpp))
-		print("Manufacturer page suggests data is 10 or 12 bits per pixel. Hereford data is 8 bits per pixel.")
+		print(f"Setting bit depth to {bpp} bits per pixel")
+		self.camera.AdcBitDepth.SetValue(bpp) # adc = analog digital conversion?
+
 	def SetBinMode(self,binX,binY):
+		print(f"Setting binning to {binX} × {binY}")
 		self.camera.BinningHorizontal.SetValue(binX)
 		self.camera.BinningVertical.SetValue(binY)
+
+	def SetExposure(self,exposure):
+		print(f"Setting exposure to {exposure}ms")
+		self.camera.ExposureTime.SetValue(exposure*1000) # camera takes microseonds
 
 if __name__ == "__main__":
 	print("This is not meant to be run but called from capture.py and liveview.py")
