@@ -3,9 +3,6 @@ white2800-NoFilter-4ms
 uv385-NoFilter-250ms
 uv405-NoFilter-12ms
 blue475-NoFilter-4ms
+ir730-NoFilter-10ms
 ir850-NoFilter-10ms
 ir940-NoFilter-34ms
-rakingLeft-NoFilter-20ms
-rakingRight-NoFilter-45ms
-white6500Left-NoFilter-10ms
-white6500Right-NoFilter-7ms

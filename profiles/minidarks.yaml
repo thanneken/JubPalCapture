@@ -1,8 +1,7 @@
-sensor: QHY600
+sensor: QHYmini
 lens: NoLens
-aperture: FNone
-cool: -15
-gain: 26
-basepath: /home/thanneken/Pictures
 lights: NoLights
-
+aperture: FNone
+cool: -10
+gain: 78
+basepath: /home/thanneken/Pictures

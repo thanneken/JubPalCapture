@@ -1,8 +1,7 @@
 sensor: QHYmini
-lens: CanonEFS24
-aperture: F5
-cool: -20
+lens: EFS24
+lights: Octopus
+aperture: F11
+cool: -10
 gain: 78
 basepath: /home/thanneken/Pictures
-lights: Octopus
-

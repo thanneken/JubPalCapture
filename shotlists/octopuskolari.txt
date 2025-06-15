@@ -1,0 +1,9 @@
+# Kolari filter pack for Kolari RP includes Kolari550nm, Kolari590nm, Kolari665nm, Kolari720nm, Kolari850nm, KolariVis... comment out pointless
+white6500-Kolari550nm_BayerRGGB-4ms
+white2800-Kolari550nm_BayerRGGB-4ms
+# uv385-Kolari550nm_BayerRGGB-250ms
+# uv405-Kolari550nm_BayerRGGB-12ms
+# blue475-Kolari550nm_BayerRGGB-4ms
+# ir730-Kolari550nm_BayerRGGB-10ms
+# ir850-Kolari550nm_BayerRGGB-10ms
+# ir940-Kolari550nm_BayerRGGB-34ms

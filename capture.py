@@ -79,9 +79,7 @@ if __name__ == "__main__":
 		lightArray = lights.Overhead()
 	print("Starting shot list")
 	for shot in shotlist:
-		if shot.strip() == "":
-			continue
-		if shot.strip().startswith('log:'):
+		if shot.strip() == "" or shot.strip().startswith('log:') or shot.strip().startswith('#'):
 			continue
 		light,wheel,exposure = shot.strip().split(sep='-')
 		exposure = int(exposure.strip('ms'))

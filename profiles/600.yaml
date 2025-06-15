@@ -1,6 +1,7 @@
-sensor: CanonT1i
+sensor: QHY600
 lens: Milvus50
 lights: Octopus
 aperture: F11
-gain: ISO400
+cool: -10
+gain: 26
 basepath: /home/thanneken/Pictures

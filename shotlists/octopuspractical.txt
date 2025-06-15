@@ -3,10 +3,9 @@ white2800-NoFilter-600ms
 uv385-NoFilter-20000ms
 uv405-NoFilter-1600ms
 blue475-NoFilter-360ms
+ir730-NoFilter-1000ms
 ir850-NoFilter-1800ms
 ir940-NoFilter-7000ms
-rakingLeft-NoFilter-1868ms
-rakingRight-NoFilter-900ms
 white6500Left-NoFilter-1000ms
 white6500Right-NoFilter-1000ms
 white6500-WrattenBlue98-3600ms
@@ -23,6 +22,5 @@ white6500-WrattenRed25-2000ms
 white2800-WrattenRed25-1100ms
 uv385-WrattenRed25-30000ms
 uv405-WrattenRed25-30000ms
-blue475-WrattenRed25-30000ms
 white6500-WrattenInfrared87-30000ms
 white6500-WrattenInfrared87C-30000ms

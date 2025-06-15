@@ -1,6 +1,6 @@
-sensor: CanonT1i
+sensor: BlackFly
 lens: NoLens
 lights: NoLights
 aperture: FNone
-gain: ISO400
+gain: 11
 basepath: /home/thanneken/Pictures

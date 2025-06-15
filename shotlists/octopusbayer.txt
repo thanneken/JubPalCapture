@@ -3,9 +3,8 @@ white2800-BayerRGGB-400ms
 uv385-BayerRGGB-5000ms
 uv405-BayerRGGB-700ms
 blue475-BayerRGGB-167ms
+ir730-BayerRGGB-5000ms
 ir850-BayerRGGB-5000ms
 ir940-BayerRGGB-5000ms
-rakingLeft-BayerRGGB-1600ms
-rakingRight-BayerRGGB-700ms
 white6500Left-BayerRGGB-600ms
 white6500Right-BayerRGGB-600ms
