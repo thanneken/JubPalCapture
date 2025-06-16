@@ -7,7 +7,12 @@ import yaml
 from skimage import io
 
 verbose = 3
+area = 'Spectralon'
 area = 'Full'
+area = 'CenterThird'
+metric = 'LinearSNR'
+metric = 'Noise'
+metric = 'Db'
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -29,11 +34,20 @@ if __name__ == "__main__":
 			base = '-'.join(imgpatharray[0:-2])
 			exposuretime = imgpatharray[-2]
 			exposuretime = exposuretime.strip('ms')
+			exposuretime = int(exposuretime)
 			print(f"{base} >> {exposuretime:>7}") if verbose > 3 else None
 			if not base in measurements:
-				measurements.update({base:{exposuretime:{'linear':snrdict[imgpath][area]['LinearSNR']}}})
+				measurements.update({base:{exposuretime:{
+						'LinearSNR':snrdict[imgpath][area]['LinearSNR'],
+						'Db':snrdict[imgpath][area]['Db'],
+						'Noise':snrdict[imgpath][area]['Noise']
+						}}})
 			else:
-				measurements[base][exposuretime] = {'linear':snrdict[imgpath][area]['LinearSNR']}
+				measurements[base][exposuretime] = {
+					'LinearSNR':snrdict[imgpath][area]['LinearSNR'],
+					'Db':snrdict[imgpath][area]['Db'],
+					'Noise':snrdict[imgpath][area]['Noise']
+				}
 		print(measurements) if verbose > 5 else None
 		plt.switch_backend('Qt5Agg')
 		for measurement in measurements.keys():
@@ -41,8 +55,10 @@ if __name__ == "__main__":
 			x = sorted(measurements[measurement])
 			y = [] 
 			for exposuretime in x:
-				y.append(measurements[measurement][exposuretime]['linear'])
+				y.append(measurements[measurement][exposuretime][metric])
 			print(list(zip(x,y))) if verbose > 4 else None
-			plt.plot(x,y)
+			label = measurement.split('-')[-2]
+			plt.plot(x,y,label=label)
+		plt.legend()
 		plt.show()
 

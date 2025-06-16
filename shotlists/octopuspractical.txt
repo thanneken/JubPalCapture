@@ -22,5 +22,6 @@ white6500-WrattenRed25-1600ms
 white2800-WrattenRed25-860ms
 uv385-WrattenRed25-5000ms
 uv405-WrattenRed25-5000ms
+ir730-WrattenRed25-1000ms
 white6500-WrattenInfrared87-5000ms
 white6500-WrattenInfrared87C-5000ms

@@ -14,14 +14,16 @@ The areas "Full" and "CenterThird" are calculated automatically. Custom areas ca
 measurenoise.py will overwrite the snr.yaml file and comments will be lost
 """
 
-verbose = 3
+verbose = 8
 
 def snrfromimg(img,x,y,w,h):
-	linearsnr = np.mean(img[y:y+h,x:x+w]) / np.std(img[y:y+h,x:x+w])
+	noise = np.std(img[y:y+h,x:x+w])
+	linearsnr = np.mean(img[y:y+h,x:x+w]) / noise
 	dbsnr = 10 * np.log10(linearsnr)
 	linearsnr = float(linearsnr)
 	dbsnr = float(dbsnr)
-	return {"x":x,"y":y,"w":w,"h":h,"LinearSNR":linearsnr,"Db":dbsnr}
+	noise = float(noise)
+	return {"x":x,"y":y,"w":w,"h":h,"LinearSNR":linearsnr,"Db":dbsnr,"Noise":noise}
 
 def snrfrompath(path,label,**kwargs):
 	if not os.path.isfile(path):
