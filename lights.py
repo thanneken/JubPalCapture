@@ -51,7 +51,6 @@ class Octopus: # Arduino is the default Octopus, specify 2023 or Bluetooth for v
 			print("Failure trying to write command %s-%s"%(port[0],port[1]))
 		time.sleep(int(exposure)/1000)
 		if True:
-			print("Lights: adding two seconds on-time to help synchronize")
 			time.sleep(2) 
 		try:
 			for octopus in self.octopodes: 
@@ -114,7 +113,8 @@ class Overhead:
 	def __init__(self):
 		print("No lights to initialize...")
 	def on(self,light,exposure):
-		exposure = int(exposure.strip('ms'))
+		if isinstance(exposure,str):
+			exposure = int(exposure.strip('ms'))
 		if light == "NoLight":
 			time.sleep(exposure/1000)
 	def close(self):

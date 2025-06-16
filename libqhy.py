@@ -320,7 +320,7 @@ class Qhyccd():
 			exposureGoal = 0.85*2**16
 			suggestion = exposureGoal*int(exposure)/np.percentile(img,98)
 			saturatedpct = 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img)
-			report = f"{light:-<10}{wheel:-<10}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
+			report = f"{light:-<10}{wheel:-<11}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
 			print(report)
 			self.reports.append(report)
 		directory = path.join(self.config['basepath'],self.target,'Raw')
