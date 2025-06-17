@@ -6,6 +6,8 @@ from os import makedirs, path
 from skimage import io
 from datetime import datetime
 
+verbose = 3
+
 class Filters:
 	NoFilter = 7 # Positions 1-7, not index 0-6
 	WrattenBlue98 = 2
@@ -268,7 +270,7 @@ class Qhyccd():
 		wheelNumSlots = int(self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_CFWSLOTSNUM))
 		try:
 			wheelNewPosition = getattr(Filters,wheelNewPosition)
-			print("Selected filter is in slot",wheelNewPosition)
+			print("Selected filter is in slot",wheelNewPosition) if verbose > 3 else None
 		except:
 			print("No code for",wheelNewPosition,"so treating as slot number")
 			pass
@@ -277,7 +279,7 @@ class Qhyccd():
 			return
 		wheelNewPosition = int(wheelNewPosition + 47) # offset by 47 when using parameters
 		wheelCurrentPosition = self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_CFWPORT)
-		print("Wheel presently at position %s of %s"%(int(wheelCurrentPosition-47),int(wheelNumSlots)))
+		print("Wheel presently at position %s of %s"%(int(wheelCurrentPosition-47),int(wheelNumSlots))) if verbose > 3 else None
 		self.sdk.SetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_CFWPORT,c_double(wheelNewPosition))
 		if wheelNewPosition == 48 and wheelCurrentPosition != 48:
 			print("Waiting 5 seconds for wheel to move to first position (fixed value because wheel reports first position while operation is in progress)")
@@ -295,7 +297,7 @@ class Qhyccd():
 				print("Waiting for wheel to move from position %s to position %s"%(int(wheelCurrentPosition-47),int(wheelNewPosition-47)))
 				time.sleep(1)
 				wheelCurrentPosition = self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_CFWPORT)
-		print("Wheel presently at position %s of %s"%(int(wheelCurrentPosition-47),int(wheelNumSlots)))
+		print("Wheel presently at position %s of %s"%(int(wheelCurrentPosition-47),int(wheelNumSlots))) if verbose > 3 else None
 
 	def showInfo(self):
 		print("Camera %s properties"%(bytes(self.id).decode()))

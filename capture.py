@@ -84,12 +84,21 @@ if __name__ == "__main__":
 		light,wheel,exposure = shot.strip().split(sep='-')
 		exposure = int(exposure.strip('ms'))
 		camera.setWheel(wheel)
-		lightProcess = Process(target=lightArray.on,args=(light,exposure)) 
-		lightProcess.start()
+		if False:
+			lightProcess = Process(target=lightArray.manualon,args=(light)) #lightProcess = Process(target=lightArray.on,args=(light,exposure)) 
+			lightProcess.start()
+		if True:
+			lightArray.manualon(light)
 		time.sleep(0.5) # Give the lights a head start
 		print("\aShooting Light = %s | Wheel = %s | Exposure = %s"%(light,wheel,exposure))
 		camera.shoot(light,wheel,exposure)
-		lightProcess.join()
+		if False:
+			lightProcess.join()
+			lightProcess = Process(target=lightArray.off) 
+			lightProcess.start()
+			lightProcess.join()
+		if True:
+			lightArray.off()
 	lightArray.close()
 	camera.close()
 
