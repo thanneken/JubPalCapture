@@ -51,7 +51,7 @@ if __name__ == "__main__":
 		exit()
 	for arg in sys.argv[1:]:
 		if not arg.endswith('snr.yaml'):
-			print(f"{arv} does not end with snr.yaml")
+			print(f"{arg} does not end with snr.yaml")
 			continue
 		if not os.path.isfile(arg):
 			print(f"{arg} is not a file")
