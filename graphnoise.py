@@ -57,7 +57,7 @@ if __name__ == "__main__":
 			for exposuretime in x:
 				y.append(measurements[measurement][exposuretime][metric])
 			print(list(zip(x,y))) if verbose > 4 else None
-			label = measurement.split('-')[-3]
+			label = measurement.split('-')[-3] # -5 is lens, -4 is aperture, -3 is gain
 			plt.plot(x,y,label=label)
 		plt.legend()
 		plt.show()

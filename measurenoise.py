@@ -14,7 +14,7 @@ The areas "Full" and "CenterThird" are calculated automatically. Custom areas ca
 measurenoise.py will overwrite the snr.yaml file and comments will be lost
 """
 
-verbose = 8
+verbose = 3
 
 def snrfromimg(img,x,y,w,h):
 	noise = np.std(img[y:y+h,x:x+w])
