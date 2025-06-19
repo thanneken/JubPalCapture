@@ -1,3 +1,6 @@
+NoLight-NoFilter-12ms
+NoLight-NoFilter-25ms
+NoLight-NoFilter-50ms
 NoLight-NoFilter-100ms
 NoLight-NoFilter-200ms
 NoLight-NoFilter-400ms
@@ -8,5 +11,37 @@ NoLight-NoFilter-6400ms
 NoLight-NoFilter-12800ms
 NoLight-NoFilter-25600ms
 NoLight-NoFilter-51200ms
-NoLight-NoFilter-102400ms
-NoLight-NoFilter-204800ms
+# NoLight-NoFilter-102400ms
+# NoLight-NoFilter-204800ms
+#repeat
+NoLight-NoFilter-12ms
+NoLight-NoFilter-25ms
+NoLight-NoFilter-50ms
+NoLight-NoFilter-100ms
+NoLight-NoFilter-200ms
+NoLight-NoFilter-400ms
+NoLight-NoFilter-800ms
+NoLight-NoFilter-1600ms
+NoLight-NoFilter-3200ms
+NoLight-NoFilter-6400ms
+NoLight-NoFilter-12800ms
+NoLight-NoFilter-25600ms
+NoLight-NoFilter-51200ms
+# NoLight-NoFilter-102400ms
+# NoLight-NoFilter-204800ms
+#repeat
+NoLight-NoFilter-12ms
+NoLight-NoFilter-25ms
+NoLight-NoFilter-50ms
+NoLight-NoFilter-100ms
+NoLight-NoFilter-200ms
+NoLight-NoFilter-400ms
+NoLight-NoFilter-800ms
+NoLight-NoFilter-1600ms
+NoLight-NoFilter-3200ms
+NoLight-NoFilter-6400ms
+NoLight-NoFilter-12800ms
+NoLight-NoFilter-25600ms
+NoLight-NoFilter-51200ms
+# NoLight-NoFilter-102400ms
+# NoLight-NoFilter-204800ms

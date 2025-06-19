@@ -1,0 +1,20 @@
+NoLight-NoFilter-167ms
+NoLight-NoFilter-250ms
+NoLight-NoFilter-400ms
+NoLight-NoFilter-500ms
+NoLight-NoFilter-600ms
+NoLight-NoFilter-10000ms
+# repeat
+NoLight-NoFilter-167ms
+NoLight-NoFilter-250ms
+NoLight-NoFilter-400ms
+NoLight-NoFilter-500ms
+NoLight-NoFilter-600ms
+NoLight-NoFilter-10000ms
+# repeat
+NoLight-NoFilter-167ms
+NoLight-NoFilter-250ms
+NoLight-NoFilter-400ms
+NoLight-NoFilter-500ms
+NoLight-NoFilter-600ms
+NoLight-NoFilter-10000ms

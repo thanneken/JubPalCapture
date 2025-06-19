@@ -1,6 +1,6 @@
 sensor: CanonT1i
 lens: NoLens
 lights: NoLights
-aperture: FNone
+aperture: F22
 gain: ISO400
-basepath: /home/thanneken/Pictures
+basepath: /media/Jub-04/Pictures

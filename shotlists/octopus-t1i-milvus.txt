@@ -1,0 +1,10 @@
+white6500-BayerRGGB-250ms
+white2800-BayerRGGB-400ms
+uv385-BayerRGGB-10000ms
+uv405-BayerRGGB-600ms
+blue475-BayerRGGB-167ms
+ir730-BayerRGGB-10000ms
+ir850-BayerRGGB-10000ms
+ir940-BayerRGGB-10000ms
+white6500Left-BayerRGGB-500ms
+white6500Right-BayerRGGB-500ms
