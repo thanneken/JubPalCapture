@@ -1,0 +1,20 @@
+NoLight-BayerRGGB-167ms
+NoLight-BayerRGGB-250ms
+NoLight-BayerRGGB-400ms
+NoLight-BayerRGGB-500ms
+NoLight-BayerRGGB-600ms
+NoLight-BayerRGGB-10000ms
+# repeat
+NoLight-BayerRGGB-167ms
+NoLight-BayerRGGB-250ms
+NoLight-BayerRGGB-400ms
+NoLight-BayerRGGB-500ms
+NoLight-BayerRGGB-600ms
+NoLight-BayerRGGB-10000ms
+# repeat
+NoLight-BayerRGGB-167ms
+NoLight-BayerRGGB-250ms
+NoLight-BayerRGGB-400ms
+NoLight-BayerRGGB-500ms
+NoLight-BayerRGGB-600ms
+NoLight-BayerRGGB-10000ms

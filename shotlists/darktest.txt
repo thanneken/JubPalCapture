@@ -1,3 +1,4 @@
+# Canon exposure over 30 seconds commented out (51200 rounds to 30000), uncomment for QHY
 NoLight-NoFilter-12ms
 NoLight-NoFilter-25ms
 NoLight-NoFilter-50ms
@@ -8,7 +9,12 @@ NoLight-NoFilter-800ms
 NoLight-NoFilter-1600ms
 NoLight-NoFilter-3200ms
 NoLight-NoFilter-6400ms
-# repeat 
+NoLight-NoFilter-12800ms
+NoLight-NoFilter-25600ms
+NoLight-NoFilter-51200ms
+# NoLight-NoFilter-102400ms
+# NoLight-NoFilter-204800ms
+# repeat
 NoLight-NoFilter-12ms
 NoLight-NoFilter-25ms
 NoLight-NoFilter-50ms
@@ -19,7 +25,12 @@ NoLight-NoFilter-800ms
 NoLight-NoFilter-1600ms
 NoLight-NoFilter-3200ms
 NoLight-NoFilter-6400ms
-# repeat 
+NoLight-NoFilter-12800ms
+NoLight-NoFilter-25600ms
+NoLight-NoFilter-51200ms
+# NoLight-NoFilter-102400ms
+# NoLight-NoFilter-204800ms
+# repeat
 NoLight-NoFilter-12ms
 NoLight-NoFilter-25ms
 NoLight-NoFilter-50ms
@@ -30,3 +41,8 @@ NoLight-NoFilter-800ms
 NoLight-NoFilter-1600ms
 NoLight-NoFilter-3200ms
 NoLight-NoFilter-6400ms
+NoLight-NoFilter-12800ms
+NoLight-NoFilter-25600ms
+NoLight-NoFilter-51200ms
+# NoLight-NoFilter-102400ms
+# NoLight-NoFilter-204800ms

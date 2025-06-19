@@ -15,12 +15,13 @@ def createmediandarkfile(basepath,darkmedianfile):
     target = fields[0]
     camera = fields[1]
     gain = fields[4]
+    passfilter = fields[6]
     exposure = fields[7]
-    filemask = os.path.join(basepath,'LensCap','Raw','LensCap-'+camera+'-*-F*-'+gain+'-*-*-'+exposure+'-*.tif')
+    filemask = os.path.join(basepath,'LensCap','Raw','LensCap-'+camera+'-*-F*-'+gain+'-*-'+passfilter+'-'+exposure+'-*.tif')
     darklist = glob.glob(filemask)
     if len(darklist) == 0:
         if verbose > 0:
-            print("No suitable dark files found. Take ten shots of LensCap-%s-NoLens-FNone-%s-NoLight-NoFilter-%s-<timestamp>.tif"%(camera,gain,exposure))
+            print("No suitable dark files found. Take ten shots of LensCap-%s-NoLens-FNone-%s-NoLight-%s-%s-<timestamp>.tif"%(camera,gain,passfilter,exposure))
         return
     cube = []
     for darkfile in darklist:
@@ -54,14 +55,15 @@ def createdarksubtractedfile(basepath,targetfile):
     target = fields[0]
     camera = fields[1]
     gain = fields[4]
+    passfilter = fields[6]
     exposure = fields[7]
-    filemask = os.path.join(basepath,'LensCap','Median','LensCap-'+camera+'-*-F*-'+gain+'-NoLight-NoFilter-'+exposure+'-*.tif')
+    filemask = os.path.join(basepath,'LensCap','Median','LensCap-'+camera+'-*-F*-'+gain+'-NoLight-'+passfilter+'-'+exposure+'-*.tif')
     medianlist = glob.glob(filemask)
     if len(medianlist) == 0:
         if verbose > 2:
             print("No suitable median dark file found, will try to create")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        darkmedianfile = 'LensCap-'+camera+'-NoLens-FNone-'+gain+'-NoLight-NoFilter-'+exposure+'-'+timestamp+'.tif'
+        darkmedianfile = 'LensCap-'+camera+'-NoLens-FNone-'+gain+'-NoLight-'+passfilter+'-'+exposure+'-'+timestamp+'.tif'
         createmediandarkfile(basepath,darkmedianfile)
         if not os.path.exists(os.path.join(basepath,'LensCap','Median',darkmedianfile)):
             return
@@ -116,7 +118,7 @@ if __name__ == "__main__":
         elif not argument.lower().endswith('.tif'):
             print("We're expecting files that end with '.tif'. Excluding %s"%(argument))
         elif not os.path.isfile(argument): 
-            print("Not sure how we even got here. If you need symbolic links to work just edit the code.")
+            print(f"Not a path to a real tiff file: {argument}")
         else:
             rawpath, targetfile = os.path.split(argument)
             targetpath = os.path.dirname(rawpath)

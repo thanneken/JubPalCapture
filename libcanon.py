@@ -181,6 +181,7 @@ class Canon:
 						str(self.exposure)+'ms',
 						timestamp+'.'+fileExtension])
 				outfilePath = path.join(directory,outfileName)
+				print(f"Saving {outfilePath}") if verbose > 3 else None
 				io.imsave(path.join(directory,outfilePath),raw.raw_image.copy(),check_contrast=False)
 				report = f">>> {self.light:<15} 98th percentile of raw image is {np.percentile(raw.raw_image.copy(),98):>5.0f} after {self.exposure:>5.0f}, consider {exposureGoal*self.exposure/np.percentile(raw.raw_image.copy(),98):5.0f}"
 				print(report)
@@ -208,5 +209,6 @@ class Canon:
 								str(self.exposure)+'ms',
 								timestamp+'.'+fileExtension])
 						outfilePath = path.join(directory,outfileName)
+						print(f"Saving {outfilePath}") if verbose > 3 else None
 						io.imsave(path.join(directory,outfilePath),raw[:,:,channel],check_contrast=False)
 
