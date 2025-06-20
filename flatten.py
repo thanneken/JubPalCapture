@@ -34,14 +34,13 @@ def flattenimg(unflatimg,flatimg):
 		print(f"Flatened image has range {np.min(flattenedimg)} - {np.max(flattenedimg)}")
 	return flattenedimg
 
-def flattenfile(unflatpath,flatpath):
+def flattenfile(unflatpath,flatpath,flattenedpath):
 	if verbose > 4:
 		print(f"+ {unflatpath}")
 		print(f"- {flatpath}")
 	unflatimg = io.imread(unflatpath)
 	flatimg = io.imread(flatpath)
 	flattenedimg = flattenimg(unflatimg,flatimg)
-	flattenedpath = unflatpath.replace('DarkSubtracted','Flattened')
 	flatteneddir = os.path.split(flattenedpath)[0]
 	if not os.path.isdir(flatteneddir):
 		if verbose > 3: 
@@ -53,21 +52,18 @@ def flattenfile(unflatpath,flatpath):
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
-		print("This command takes one argument, a path to a directory which contains a file named flats.txt and a directory named DarkSubtracted/")
+		print("This command takes one argument, a path to a text file that lists relative paths to flats to be used to flatten the files in DarkSubtracted/")
 		exit()
-	targetdir = sys.argv[1]
-	if not os.path.isdir(targetdir):
-		print("The specifified path is not a directory")
+	flatlistpath = sys.argv[1]
+	if not os.path.isfile(flatlistpath):
+		print("The specified flats list file does not exist")
 		exit()
-	flatslistfile = os.path.join(targetdir,'flats.txt')
-	if not os.path.isfile(flatslistfile):
-		print("The specified directory does not contain a file called flats.txt")
-		exit()
+	targetdir = os.path.dirname(flatlistpath)
 	unflatdir = os.path.join(targetdir,'DarkSubtracted')
 	if not os.path.isdir(unflatdir):
-		print("The specified directory does not contain a directory named DarkSubtracted/")
+		print("The specified flats list file does not share a directory with a directory named DarkSubtracted/. Perhaps it is time to run darksubtract.py.")
 		exit()
-	with open(flatslistfile,'r') as flatslisthandle:
+	with open(flatlistpath,'r') as flatslisthandle:
 		flatlist = flatslisthandle.readlines()
 		flatlist = [line.rstrip() for line in flatlist]
 	unflatfilelist = os.listdir(unflatdir)
@@ -77,9 +73,15 @@ if __name__ == "__main__":
 			if essential in flatpath:
 				unflatpath = os.path.join(targetdir,'DarkSubtracted',unflatfile)
 				flatpath = os.path.join(targetdir,flatpath)
+				flattenedpath = unflatpath.replace('DarkSubtracted','Flattened')
 				if not os.path.isfile(unflatpath):
-					print(f"Error finding {unflatpath}")
+					print(f"Error finding {unflatpath=}")
+					continue
 				if not os.path.isfile(flatpath):
-					print(f"Error finding {flatpath}")
-				flattenfile(unflatpath,flatpath)
+					print(f"Error finding {flatpath=}")
+					continue
+				if os.path.isfile(flattenedpath):
+					print(f"Flattened file already exists: {flattenedpath}")
+					continue
+				flattenfile(unflatpath,flatpath,flattenedpath)
 
