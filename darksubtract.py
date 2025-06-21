@@ -16,6 +16,8 @@ def createmediandarkfile(basepath,darkmedianfile):
     camera = fields[1]
     gain = fields[4]
     passfilter = fields[6]
+    if not 'Bayer' in passfilter:
+      passfilter = 'NoFilter'
     exposure = fields[7]
     filemask = os.path.join(basepath,'LensCap','Raw','LensCap-'+camera+'-*-F*-'+gain+'-*-'+passfilter+'-'+exposure+'-*.tif')
     darklist = glob.glob(filemask)
@@ -56,6 +58,8 @@ def createdarksubtractedfile(basepath,targetfile):
     camera = fields[1]
     gain = fields[4]
     passfilter = fields[6]
+    if not 'Bayer' in passfilter:
+      passfilter = 'NoFilter'
     exposure = fields[7]
     filemask = os.path.join(basepath,'LensCap','Median','LensCap-'+camera+'-*-F*-'+gain+'-NoLight-'+passfilter+'-'+exposure+'-*.tif')
     medianlist = glob.glob(filemask)
