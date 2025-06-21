@@ -4,4 +4,4 @@ lights: NoLights
 aperture: FNone
 cool: -10
 gain: 78
-basepath: /home/thanneken/Pictures
+basepath: /mnt/fractal

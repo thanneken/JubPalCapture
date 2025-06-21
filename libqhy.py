@@ -7,6 +7,7 @@ from skimage import io
 from datetime import datetime
 
 verbose = 3
+linearityHDR = False
 
 class Filters:
 	NoFilter = 7 # Positions 1-7, not index 0-6
@@ -45,17 +46,28 @@ class Qhyccd():
 		self.sdk.SetQHYCCDParam(self.cam, CONTROL_ID.CONTROL_USBTRAFFIC, c_double(50))
 		self.SetBit(16)
 		self.SetBinMode(1,1) # also includes effective pixel area adjustment (drop overscan)
+		self.SetROI(self.x.value, self.y.value, self.w.value, self.h.value) 
 		if bytes(self.id).decode().startswith('QHYminiCam'):
-			self.SetReadMode(1) # mini read mode 1 is LinearityHDR
-			self.SetOffset(30) # mini offset starts at 30 (factory default?)
+			if linearityHDR:
+				print("Setting read mode to LinearityHDR (it seems to be important to set read mode after gain, perhaps overriding gain setting?)")
+				print("Not setting gain or offset in LinearityHDR mode")
+				self.SetReadMode(1) # mini read mode 1 is LinearityHDR
+			else:
+				print("Setting read mode to Photographic (LinearityHDR still needs work)")
+				self.SetReadMode(0) # mini read mode 1 is LinearityHDR
+				print("Setting offset to 30")
+				self.SetOffset(30) # mini offset starts at 30 (factory default?)
+				print("Setting gain to %s"%(self.config['gain']))
+				self.SetGain(self.config['gain'])
 		elif bytes(self.id).decode().startswith('QHY600'):
 			self.SetReadMode(0) # 600 read mode 0 is photographic
 			self.SetOffset(30) # 600 offset starts at 30 (factory default?)
+			print("Setting gain to %s"%(self.config['gain']))
+			self.SetGain(self.config['gain'])
 		else:
-			print("Not how to set read mode or offset for this camera")
-		self.SetROI(self.x.value, self.y.value, self.w.value, self.h.value) 
-		print("Setting gain to %s"%(self.config['gain']))
-		self.SetGain(self.config['gain'])
+			print("Don't know how to set read mode or offset for this camera")
+			print("Setting gain to %s"%(self.config['gain']))
+			self.SetGain(self.config['gain'])
 		self.sdk.SetQHYCCDParam(self.cam, CONTROL_ID.CONTROL_MANULPWM, c_double(255)) # Maximum fan speed seems to be not working but fan is certainly running even with reported value 0
 		print("Setting cooling to %s"%(self.config['cool'])) 
 		self.SetCooler(self.config['cool'])
@@ -286,11 +298,12 @@ class Qhyccd():
 			time.sleep(5)
 			wheelCurrentPosition = self.sdk.GetQHYCCDParam(self.cam,CONTROL_ID.CONTROL_CFWPORT)
 		elif bytes(self.id).decode().startswith('QHYminiCam'):
-			print("Restore the pause when put filters in minicam")
+			if wheelCurrentPosition != wheelNewPosition:
+				print("Waiting 8 seconds for miniCam wheel to move")
+				time.sleep(8)
 			wheelCurrentPosition = wheelNewPosition
 		elif bytes(self.id).decode().startswith('QHYminiCam'):
-			print("Waiting 8 seconds for miniCam wheel to move")
-			time.sleep(8)
+			print("Restore the pause when put filters in minicam")
 			wheelCurrentPosition = wheelNewPosition
 		else:
 			while wheelCurrentPosition != wheelNewPosition:
