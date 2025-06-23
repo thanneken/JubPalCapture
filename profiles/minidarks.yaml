@@ -3,5 +3,5 @@ lens: NoLens
 lights: NoLights
 aperture: FNone
 cool: -10
-gain: 78
+gain: 26
 basepath: /mnt/fractal
