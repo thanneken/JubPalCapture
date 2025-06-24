@@ -1,0 +1,6 @@
+sensor: Pixelink
+lens: NoLens
+lights: NoLights
+aperture: FNone
+gain: 11
+basepath: /home/thanneken/Pictures
