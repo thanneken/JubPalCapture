@@ -87,7 +87,10 @@ class Misha:
 		import serial.tools.list_ports
 		ports = serial.tools.list_ports.comports()
 		for port in ports:
-			if "Silicon Labs CP210x USB to UART Bridge" in port.description:
+			if "seeeduino Nano" in port.description:
+				port_number = port.device
+				break
+			elif "Silicon Labs CP210x USB to UART Bridge" in port.description:
 				port_number = port.device
 				break
 		self.led_connection = serial.Serial(port_number, 9600)
