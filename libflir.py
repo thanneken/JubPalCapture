@@ -1,7 +1,9 @@
 import time
-import datetime
+import os
+from datetime import datetime
 import PySpin
 import numpy as np
+from skimage import io
 
 """
 https://softwareservices.flir.com/FFY-U3-04S2/latest/Model/public/ImageFormatControl.html
@@ -57,7 +59,7 @@ class Flir():
 		if 'bpp' in config:
 			self.SetBit(self,config['bpp'])
 		else:
-			self.SetBit(self,16)
+			self.SetBit(16)
 		self.SetBinMode(1,1) # self.camera.BeginAcquisition() is done by SetBinMode
 
 	def showInfo(self):
@@ -77,7 +79,7 @@ class Flir():
 		return img
 
 	def shoot(self,light,wheel,exposure):
-		self.SetExposure(self,exposure)
+		self.SetExposure(exposure)# self.SetExposure(self,exposure)
 		print("Shooting for %sms"%(exposure))
 		image_result = self.camera.GetNextImage()
 		while image_result.IsIncomplete():
@@ -95,12 +97,12 @@ class Flir():
 			report = f"{light:-<10}{wheel:-<10}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
 			print(report)
 			self.reports.append(report)
-		directory = path.join(self.config['basepath'],self.target,'Raw')
-		if not path.exists(directory):
-			makedirs(directory)
+		directory = os.path.join(self.config['basepath'],self.target,'Raw')
+		if not os.path.exists(directory):
+			os.makedirs(directory)
 		timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 		fileExtension = 'tif'
-		if self.config['cool']:
+		if 'cool' in self.config:
 			gainDesc = 'gain'+str(self.config['gain'])+'_'+str(self.config['cool']).strip('-')
 		else:
 			gainDesc = 'gain'+str(self.config['gain'])
@@ -110,11 +112,11 @@ class Flir():
 			self.config['lens'],
 			self.config['aperture'],
 			gainDesc,
-			self.light,
-			self.wheel,
-			str(self.exposure)+'ms',
+			light,
+			wheel,
+			str(exposure)+'ms',
 			timestamp+'.'+fileExtension])
-		outfilePath = path.join(directory,outfileName)
+		outfilePath = os.path.join(directory,outfileName)
 		print("Saving %s"%(outfilePath))
 		io.imsave(outfilePath,img,check_contrast=False)
 
@@ -151,20 +153,24 @@ class Flir():
 		"""
 		if bpp == 8:
 			print("Setting Pixel Format to Mono8")
-			self.camera.PixelFormat.SetValue('Mono8')
+			self.camera.PixelFormat.SetValue(PySpin.PixelfFormat_Mono8)
 		else:
 			print("Setting Pixel Format to Mono16")
-			self.camera.PixelFormat.SetValue('Mono16')
-
+			self.camera.PixelFormat.SetValue(PySpin.PixelFormat_Mono16)
+			
 	def SetBinMode(self,binX,binY):
 		if self.camera.IsStreaming():
 			self.camera.EndAcquisition()
 		print(f"Setting binning to {binX} × {binY}")
-		self.camera.BinningSelector.SetVAlue('Sensor')
-		self.camera.BinningHorizontalMode.SetValue('Additive') # Additive better for short exposures, Average better for SNR
-		self.camera.BinningVerticalMode.SetValue('Additive')
-		self.camera.BinningHorizontal.SetValue(binX)
-		self.camera.BinningVertical.SetValue(binY)
+		if binX != 1:
+			print("Pixel binning not yet successfully implemented")
+			exit()
+		if False:
+			self.camera.BinningSelector.SetValue('Sensor')
+			self.camera.BinningHorizontalMode.SetValue('Additive') # Additive better for short exposures, Average better for SNR
+			self.camera.BinningVerticalMode.SetValue('Additive')
+			self.camera.BinningHorizontal.SetValue(binX)
+			self.camera.BinningVertical.SetValue(binY)
 		self.camera.BeginAcquisition()
 
 	def SetExposure(self,exposure):

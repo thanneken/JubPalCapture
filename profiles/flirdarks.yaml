@@ -1,4 +1,4 @@
-sensor: BlackFly
+sensor: Flir
 lens: NoLens
 lights: NoLights
 aperture: FNone
