@@ -57,7 +57,7 @@ class Flir():
 			print("Setting gain to 11.1 db")
 			self.camera.Gain.SetValue(11.1) 
 		if 'bpp' in config:
-			self.SetBit(self,config['bpp'])
+			self.SetBit(config['bpp'])
 		else:
 			self.SetBit(16)
 		self.SetBinMode(1,1) # self.camera.BeginAcquisition() is done by SetBinMode
@@ -141,11 +141,16 @@ class Flir():
 		print("No wheel to set")
 
 	def SetROI(self,roiX,roiY,roiW,roiH):
-		print(f"Changing ROI to x,y,w,h = {roiX},{roiY},{roiW},{roiH}")
-		self.camera.OffsetX.SetValue(roiX)
-		self.camera.OffsetY.SetValue(roiY)
-		self.camera.Height.SetValue(roiH)
-		self.camera.Width.SetValue(roiW)
+		if False:
+			self.camera.RoiEnable.SetValue(True)
+		if False:
+			print(f"Changing ROI to x,y,w,h = {roiX},{roiY},{roiW},{roiH}")
+			self.camera.OffsetX.SetValue(roiX)
+			self.camera.OffsetY.SetValue(roiY)
+			self.camera.Height.SetValue(roiH)
+			self.camera.Width.SetValue(roiW)
+		print("ROI not yet successfully implemented")
+		pass
 
 	def SetBit(self,bpp):
 		"""
@@ -153,7 +158,7 @@ class Flir():
 		"""
 		if bpp == 8:
 			print("Setting Pixel Format to Mono8")
-			self.camera.PixelFormat.SetValue(PySpin.PixelfFormat_Mono8)
+			self.camera.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
 		else:
 			print("Setting Pixel Format to Mono16")
 			self.camera.PixelFormat.SetValue(PySpin.PixelFormat_Mono16)
@@ -162,14 +167,18 @@ class Flir():
 		if self.camera.IsStreaming():
 			self.camera.EndAcquisition()
 		print(f"Setting binning to {binX} × {binY}")
-		if binX != 1:
-			print("Pixel binning not yet successfully implemented")
-			exit()
-		if False:
-			self.camera.BinningSelector.SetValue('Sensor')
-			self.camera.BinningHorizontalMode.SetValue('Additive') # Additive better for short exposures, Average better for SNR
-			self.camera.BinningVerticalMode.SetValue('Additive')
-			self.camera.BinningHorizontal.SetValue(binX)
+		if True:
+			if binX != 1:
+				print("Pixel binning not yet successfully implemented")
+				binX = binY = 1
+		if True:
+			self.camera.BinningSelector.SetValue(PySpin.BinningSelector_Sensor)
+			print(f"{PySpin.BinningHorizontalMode_Sum=}")
+		if True:
+			self.camera.BinningHorizontalMode.SetValue(PySpin.BinningHorizontalMode_Sum) # Additive better for short exposures, Average better for SNR
+			self.camera.BinningVerticalMode.SetValue(PySpin.BinningVerticalMode_Sum) # self.camera.BinningVerticalMode.SetValue('Additive')
+			print(f"{binX=}")
+			self.camera.BinningHorizontal.SetValue(int(binX))
 			self.camera.BinningVertical.SetValue(binY)
 		self.camera.BeginAcquisition()
 
