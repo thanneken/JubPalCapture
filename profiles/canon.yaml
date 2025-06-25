@@ -1,6 +1,6 @@
-sensor: CanonT1i
+sensor: SpencerR7
 lens: Milvus50
-lights: Octopus
+lights: Misha
 aperture: F11
 gain: ISO400
-basepath: /media/Jub-04/Pictures
+basepath: /mnt/fractal

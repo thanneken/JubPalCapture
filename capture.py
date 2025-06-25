@@ -58,6 +58,11 @@ if __name__ == "__main__":
 		from libpixelink import Pixelink
 		camera = Pixelink()
 		camera.session(config,args.target)
+	elif config['sensor'].lower().startswith('spencer'):
+		from libcanon import Canon 
+		camera = Canon(config,args.target)
+		print("Giving Canon 1 seconds to initialize")
+		time.sleep(1)
 	else:
 		print("Not sure which camera to initialize")
 		exit()
@@ -74,7 +79,9 @@ if __name__ == "__main__":
 	elif config['lights'].lower().startswith('overhead'):
 		lightArray = lights.Overhead()
 	elif config['lights'].lower().startswith('misha'):
-		lightArray = lights.Misha
+		lightArray = lights.Misha()
+		print("Giving the Misha lights another 2 seconds to open")
+		time.sleep(2)
 	elif config['lights'].lower().startswith('nolight'):
 		lightArray = lights.Overhead()
 	print("Starting shot list")
@@ -83,6 +90,7 @@ if __name__ == "__main__":
 			continue
 		light,wheel,exposure = shot.strip().split(sep='-')
 		exposure = int(exposure.strip('ms'))
+		print("\aShooting Light = %s | Wheel = %s | Exposure = %s"%(light,wheel,exposure))
 		camera.setWheel(wheel)
 		if False:
 			lightProcess = Process(target=lightArray.manualon,args=(light)) #lightProcess = Process(target=lightArray.on,args=(light,exposure)) 
@@ -90,7 +98,6 @@ if __name__ == "__main__":
 		if True:
 			lightArray.manualon(light)
 		time.sleep(0.5) # Give the lights a head start
-		print("\aShooting Light = %s | Wheel = %s | Exposure = %s"%(light,wheel,exposure))
 		camera.shoot(light,wheel,exposure)
 		if False:
 			lightProcess.join()

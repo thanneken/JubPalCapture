@@ -1,6 +1,6 @@
-sensor: BlackFly
-lens: EFS24
-lights: Octopus
+sensor: Flir
+lens: Schneider23
+lights: Misha
 aperture: F11
 gain: 11
-basepath: /home/thanneken/Pictures
+basepath: /mnt/fractal

@@ -1,0 +1,8 @@
+sensor: QHY411
+lens: MegaVision120
+lights: Overhead
+aperture: F11
+cool: -1
+gain: 26
+basepath: /mnt/fractal
+

@@ -16,6 +16,7 @@ class Filters:
 	WrattenRed25 = 4
 	WrattenInfrared87 = 5
 	WrattenInfrared87C = 6
+	Position1 = 1
 
 class Qhyccd():
 	def __init__(self):

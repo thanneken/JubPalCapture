@@ -1,6 +1,6 @@
-sensor: CanonT1i
+sensor: SpencerR7
 lens: NoLens
 lights: NoLights
 aperture: F22
 gain: ISO400
-basepath: /media/Jub-04/Pictures
+basepath: /mnt/fractal

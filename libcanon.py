@@ -8,7 +8,7 @@ from os import makedirs, path
 from skimage import io
 from edsdk import (CameraCommand, ObjectEvent, FileCreateDisposition, Access, EdsObject, PropID, PropertyEvent, SaveTo, ISOSpeedCamera, AEMode, AFMode, Av, Tv, ImageQuality)
 
-verbose = 4
+verbose = 9
 exposureGoal = 0.85*2**14 # possibly different for R7
 
 class Canon:
@@ -47,6 +47,7 @@ class Canon:
 			print("Setting aperture to %s"%(config['aperture']))
 			edsdk.SetPropertyData(self.camera,PropID.Av,0,self.codeLookup(config['aperture']))
 			edsdk.GetEvent()
+			self.showInfo()
 		def showInfo(self):
 				print("Product name is %s"%(edsdk.GetPropertyData(self.camera,PropID.ProductName,0)))
 				print("Gain reported from camera is %s"%(ISOSpeedCamera(edsdk.GetPropertyData(self.camera,PropID.ISOSpeed,0)).name))
@@ -76,19 +77,20 @@ class Canon:
 				waitForCamera = self.exposure/1000 + 5 # at four failed on 30sec exposure
 				edsdk.SetPropertyData(self.camera,PropID.Tv,0,self.codeLookup(self.milliseconds[self.exposure]))
 				edsdk.GetEvent()
-				width = 6960 # for purposes of calculating memory to reserve, 4752 on t1i, 6960 on r7
-				height = 4640 # not super precise because of compression, 3168 on t1i, 4640 on r7
-				imageData = bytes(width*height*2) # 1 for 8-bit, 2 for 16-bit, 3 for three channels of 8-bit	.... won't need all that space because compressed
-				self.memStream = edsdk.CreateMemoryStreamFromPointer(imageData)
+				if False:
+					width = 7000 # 6983 # 6960*2 # for purposes of calculating memory to reserve, 4752 on t1i, 6960 on r7
+					height = 5000 # 4655 # 4640*2 # not super precise because of compression, 3168 on t1i, 4640 on r7
+					self.imageData = bytes(width*height*2) # 1 for 8-bit, 2 for 16-bit, 3 for three channels of 8-bit	.... won't need all that space because compressed
+					self.memStream = edsdk.CreateMemoryStreamFromPointer(self.imageData)
 				edsdk.SendCommand(self.camera,CameraCommand.TakePicture,0)
 				time.sleep(waitForCamera)
 				edsdk.GetEvent()
+				if True:
+					with rawpy.imread(BytesIO(self.imageData)) as raw:
+						self.saveRawFunction(raw) #img = raw.raw_image.copy() print("We now have a numpy object named img with shape %s dtype %s range %s - %s"%(img.shape,img.dtype,np.min(img),np.max(img)))
 				if False:
-						with rawpy.imread(BytesIO(imageData)) as raw:
-								img = raw.raw_image.copy()
-						print("We now have a numpy object named img with shape %s dtype %s range %s - %s"%(img.shape,img.dtype,np.min(img),np.max(img)))
-				with rawpy.imread(BytesIO(imageData)) as raw: 
-						self.saveRawFunction(raw) 
+					with rawpy.imread(BytesIO(self.imageData)) as raw: 
+							self.saveRawFunction(raw) 
 		def close(self):
 				for report in self.reports:
 					print(report)
@@ -153,6 +155,9 @@ class Canon:
 				edsdk.DownloadComplete(object_handle)
 		def buildNumpyFunction(self,object_handle): 
 				dir_item_info = edsdk.GetDirectoryItemInfo(object_handle)
+				if True:
+					self.imageData = bytes(dir_item_info["size"]) 
+					self.memStream = edsdk.CreateMemoryStreamFromPointer(self.imageData)
 				print("Note: ObjectFormat 10874880 = 0xA5F000 = Canon Raw") if verbose > 4 else None
 				print("Copying image data from camera SD card to RAM with size %s"%(dir_item_info["size"])) if verbose > 4 else None
 				edsdk.Download(object_handle,dir_item_info["size"],self.memStream)

@@ -1,0 +1,35 @@
+NoLight-BayerRGGB-100ms
+NoLight-BayerRGGB-125ms
+NoLight-BayerRGGB-150ms
+NoLight-BayerRGGB-180ms
+NoLight-BayerRGGB-200ms
+NoLight-BayerRGGB-300ms
+NoLight-BayerRGGB-550ms
+NoLight-BayerRGGB-650ms
+NoLight-BayerRGGB-6800ms
+NoLight-BayerRGGB-820ms
+NoLight-BayerRGGB-900ms
+# repeat
+NoLight-BayerRGGB-100ms
+NoLight-BayerRGGB-125ms
+NoLight-BayerRGGB-150ms
+NoLight-BayerRGGB-180ms
+NoLight-BayerRGGB-200ms
+NoLight-BayerRGGB-300ms
+NoLight-BayerRGGB-550ms
+NoLight-BayerRGGB-650ms
+NoLight-BayerRGGB-6800ms
+NoLight-BayerRGGB-820ms
+NoLight-BayerRGGB-900ms
+# repeat
+NoLight-BayerRGGB-100ms
+NoLight-BayerRGGB-125ms
+NoLight-BayerRGGB-150ms
+NoLight-BayerRGGB-180ms
+NoLight-BayerRGGB-200ms
+NoLight-BayerRGGB-300ms
+NoLight-BayerRGGB-550ms
+NoLight-BayerRGGB-650ms
+NoLight-BayerRGGB-6800ms
+NoLight-BayerRGGB-820ms
+NoLight-BayerRGGB-900ms

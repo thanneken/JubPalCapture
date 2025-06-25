@@ -88,6 +88,12 @@ class Flir():
 			image_result = self.camera.GetNextImage()
 		img = image_result.GetNDArray()
 		image_result.Release()
+		if True:
+			if self.camera.IsStreaming():
+				print("Restarting Stream")
+				self.camera.EndAcquisition()
+				time.sleep(2)
+				self.camera.BeginAcquisition()
 		if self.rotate:
 			np.rot90(img,2)
 		if True:
