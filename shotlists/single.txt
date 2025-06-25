@@ -1,1 +1,1 @@
-white6500-WrattenGreen61-100ms
+NoLight-NoFilter-500ms

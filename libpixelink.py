@@ -1,7 +1,9 @@
 import time
-import datetime
+from os import path
+from datetime import datetime
 import numpy as np
 from pixelinkWrapper import *
+from skimage import io
 import sys
 
 class Pixelink():
@@ -23,12 +25,13 @@ class Pixelink():
 		self.reports = []
 		self.config = config
 		self.target = target
-		self.SetGain(self,float(config['gain']))
+		self.SetGain(float(config['gain']))
 		if 'bpp' in config:
-			self.SetBitDepth(self,config['bpp'])
+			self.SetBitDepth(config['bpp'])
 		else:
-			self.SetBitDepth(self,16)
-		self.Begin_Acquisition(self)
+			self.SetBitDepth(16)
+		self.Begin_Acquisition()
+		self.showInfo()
 
 	def SetGain(self,db):
 		ret = PxLApi.getFeature(self.hCamera, PxLApi.FeatureId.GAIN) 
@@ -69,10 +72,11 @@ class Pixelink():
 		self.bpp = 8 * PxLApi.getBytesPerPixel(pixelFormat) # returns bytes per pixel, so multiply for bits per pixel
 		if self.bpp == 16:
 			print(f"Confirmed using {self.bpp} bits per pixel")
-			self.frame = np.zeros([self.imgHeight, self.imgWidth], dtype=np.uint16) 
+			self.frame = np.zeros([int(self.imgHeight), int(self.imgWidth)], dtype=np.uint16) 
 		else:
 			print(f"Using {self.bpp}! Fix that before proceeding...")
-			exit() # or self.frame = np.zeros([self.imgHeight, self.imgWidth], dtype=np.uint8) 
+			self.frame = np.zeros([int(self.imgHeight), int(self.imgWidth)], dtype=np.uint8) 
+		print("Starting the stream")
 		PxLApi.setStreamState(self.hCamera, PxLApi.StreamState.START)
 
 	def End_Acquisition(self):
@@ -80,7 +84,7 @@ class Pixelink():
 
 	def showInfo(self):
 		print(f"Pixel dimensions {self.roiWidth} × {self.roiHeight} binned to {self.binXY} for {self.imgWidth} × {self.imgHeight} with {self.bpp} bits per pixel")
-		ret = PxLApi.getCameraInfo(hCamera)
+		ret = PxLApi.getCameraInfo(self.hCamera)
 		cameraInfo = ret[1]
 		self.name = cameraInfo.CameraName.decode("utf-8")
 		print("Name -------------- '%s'" % cameraInfo.CameraName.decode("utf-8"))
@@ -98,22 +102,41 @@ class Pixelink():
 		print("Sensor Temp °C ---- '%s'" % params[0])
 
 	def SetExposure(self, exposureMS):
+		print(f"Setting exposure to {exposureMS}ms")
 		ret = PxLApi.getFeature(self.hCamera, PxLApi.FeatureId.EXPOSURE)
 		params = ret[2]
 		params[0] = exposureMS/1000 # confirm that takes seconds
 		ret = PxLApi.setFeature(self.hCamera, PxLApi.FeatureId.EXPOSURE, PxLApi.FeatureFlags.MANUAL, params)
 
 	def shoot(self,light,wheel,exposure):
-		SetExposure(exposure)
+		self.SetExposure(exposure)
+		print(f"{np.max(self.frame)=} {self.frame.shape=} {self.frame.dtype=}")
 		for i in range(5): # try five times to get a frame
+			print("Trying to get a frame")
 			ret = PxLApi.getNextNumPyFrame(self.hCamera,self.frame)
 			if PxLApi.apiSuccess(ret[0]):
+				print("Successfully captured a frame")
 				break
+			else:
+			 	if PxLApi.ReturnCode.ApiStreamStopped == ret[0]:
+			 		print("Stream is stopped")
+			 	elif PxLApi.ReturnCode.ApiNoCameraAvailableError == ret[0]:
+			 		print("No camera avilable")
+			 	elif PxLApi.ReturnCode.ApiBufferTooSmall == ret[0]:
+			 		print("Buffer too small")
+			 	else:
+			 		print(f"{ret=}")
+		if True:
+			print(f"{np.max(self.frame)=} {self.frame.shape=}")
+			if np.max(self.frame) == 0:
+				print("Looks like a frame was not successfully captured. Let's close and quit.")
+				self.close()
+				exit()
 		if True:
 			exposureGoal = 0.85*2**16 # might be 2**12 on pixelink
-			suggestion = exposureGoal*int(exposure)/np.percentile(img,98)
-			saturatedpct = 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img) # might be lower on pixelink
-			report = f"{light:-<10}{wheel:-<10}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
+			suggestion = exposureGoal*int(exposure)/np.percentile(self.frame,98)
+			saturatedpct = 100 * np.count_nonzero(self.frame > 64000) / np.count_nonzero(self.frame) # might be lower on pixelink
+			report = f"{light:-<10}{wheel:-<10}{exposure:->5}ms pixel values range {np.min(self.frame):>5} - {np.max(self.frame):5} with 98th percentile of {np.percentile(self.frame,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
 			print(report)
 			self.reports.append(report)
 		directory = path.join(self.config['basepath'],self.target,'Raw')
@@ -131,9 +154,9 @@ class Pixelink():
 			self.config['lens'],
 			self.config['aperture'],
 			gainDesc,
-			self.light,
-			self.wheel,
-			str(self.exposure)+'ms',
+			light,
+			wheel,
+			str(exposure)+'ms',
 			timestamp+'.'+fileExtension])
 		outfilePath = path.join(directory,outfileName)
 		print("Saving %s"%(outfilePath))
@@ -143,7 +166,7 @@ class Pixelink():
 		print("Closing Pixelink camera")
 		for report in self.reports:
 			print(report)
-		End_Acquisition(self)
+		self.End_Acquisition()
 		ret = PxLApi.setStreamState(self.hCamera, PxLApi.StreamState.STOP)
 		if self.hCamera is not None:
 			ret = PxLApi.uninitialize(self.hCamera)
@@ -165,7 +188,7 @@ class Pixelink():
 			fVerticalValue
 		redo self.frame size calculation
 		"""
-		End_Acquisition(self)
+		self.End_Acquisition()
 		ret = PxLApi.getFeature(self.hCamera, PxLApi.FeatureId.PIXEL_ADDRESSING) 
 		params = ret[2]
 		if binX == 1:
@@ -176,7 +199,7 @@ class Pixelink():
 		params[2] = binX
 		params[3] = binY
 		ret = PxLApi.setFeature(self.hCamera, PxLApi.FeatureId.PIXEL_ADDRESSING, PxLApi.FeatureFlags.MANUAL, params)
-		Begin_Acquisition(self)
+		self.Begin_Acquisition()
 
 	def SetROI(self,roiX,roiY,roiW,roiH):
 		"""
@@ -186,7 +209,7 @@ class Pixelink():
 		h possible values range 64-3648 in steps of 8 (default 3648)
 		"""
 		print(f"Stopping acquire mode to change ROI to x,y,w,h = {roiX},{roiY},{roiW},{roiH}")
-		End_Acquisition(self)
+		self.End_Acquisition()
 		ret = PxLApi.getFeature(self.hCamera, PxLApi.FeatureId.ROI) 
 		params = ret[2]
 		params[0] = roiX
@@ -195,13 +218,13 @@ class Pixelink():
 		params[3] = roiH
 		ret = PxLApi.setFeature(self.hCamera, PxLApi.FeatureId.ROI, PxLApi.FeatureFlags.MANUAL, params)
 		print("Restarting acquire mode after changing ROI")
-		Begin_Acquisition(self)
+		self.Begin_Acquisition()
 
 	def StopLive(self):
-		End_Acquisition(self)
+		self.End_Acquisition()
 
 	def BeginLive(self):
-		Begin_Acquisition(self)
+		self.Begin_Acquisition()
 
 	def GetLiveFrame(self):
 		for i in range(5): # try five times to get a frame
