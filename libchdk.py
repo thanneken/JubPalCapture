@@ -1,5 +1,7 @@
 from math import log2
 from libcanon import Canon
+import rawpy
+from io import BytesIO
 try:
 	import chdkptp
 except:
@@ -74,17 +76,20 @@ class Chdk():
 		Sv = log2(iso/3.125)
 		"""
 		timevalueapex96 = -log2(exposure/1000) 
-		if self.config['gain'].lower().startswith('iso'):
+		if 'gain' in self.config and self.config['gain'].lower().startswith('iso'):
 			iso = int(self.config['gain'].lower().strip('iso'))
 			real_iso = log2(iso*8/25)
-		elif int(self.config['gain']) >=100:
+		elif 'gain' in self.config and int(self.config['gain']) >=100:
 			iso = int(self.config['gain'])
 			real_iso = log2(iso*8/25)
 		else:
 			real_iso= int(self.config['gain'])
 		aperturevalueapex96 = 2*log2(int(self.config['aperture'].strip('F')))
 		dng = self.device.shoot(dng=True,shutter_speed=timevalueapex96,real_iso=real_iso,aperture=aperturevalueapex96)
-		Canon.saveRawFunction(self,dng) 
+		with rawpy.imread(BytesIO(dng)) as raw: 
+			Canon.saveRawFunction(self,raw) 
+		if False:
+			Canon.saveRawFunction(self,dng) 
 	def close(self):
 		for report in self.reports:
 			print(report)

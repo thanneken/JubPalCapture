@@ -1,0 +1,6 @@
+sensor: KolariElph
+lens: FixedLens
+lights: Overhead
+aperture: F11
+gain: ISO400
+basepath: /home/thanneken/Pictures
