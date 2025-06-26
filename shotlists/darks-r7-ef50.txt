@@ -1,12 +1,9 @@
-# only values not already covered with milvus
-NoLight-BayerRGGB-3200ms
-NoLight-BayerRGGB-500ms
-NoLight-BayerRGGB-67ms
+# only values not already covered 
+NoLight-BayerRGGB-250ms
+NoLight-BayerRGGB-77ms
 # repeat
-NoLight-BayerRGGB-3200ms
-NoLight-BayerRGGB-500ms
-NoLight-BayerRGGB-67ms
+NoLight-BayerRGGB-250ms
+NoLight-BayerRGGB-77ms
 # repeat
-NoLight-BayerRGGB-3200ms
-NoLight-BayerRGGB-500ms
-NoLight-BayerRGGB-67ms
+NoLight-BayerRGGB-250ms
+NoLight-BayerRGGB-77ms

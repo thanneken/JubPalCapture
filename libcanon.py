@@ -8,7 +8,7 @@ from os import makedirs, path
 from skimage import io
 from edsdk import (CameraCommand, ObjectEvent, FileCreateDisposition, Access, EdsObject, PropID, PropertyEvent, SaveTo, ISOSpeedCamera, AEMode, AFMode, Av, Tv, ImageQuality)
 
-verbose = 9
+verbose = 2
 exposureGoal = 0.85*2**14 # possibly different for R7
 
 class Canon:
