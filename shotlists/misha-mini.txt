@@ -1,0 +1,16 @@
+365-NoFilter-2330ms
+385-NoFilter-2500ms
+395-NoFilter-2170ms
+420-NoFilter-1230ms
+450-NoFilter-300ms
+470-NoFilter-370ms
+500-NoFilter-430ms
+530-NoFilter-550ms
+560-NoFilter-380ms
+590-NoFilter-1800ms
+615-NoFilter-460ms
+630-NoFilter-470ms
+660-NoFilter-350ms
+730-NoFilter-370ms
+850-NoFilter-190ms
+940-NoFilter-490ms

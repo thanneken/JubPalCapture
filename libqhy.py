@@ -6,15 +6,15 @@ from os import makedirs, path
 from skimage import io
 from datetime import datetime
 
-verbose = 3
+verbose = 9
 linearityHDR = False
-exposureGoal = 0.85*2**16
 exposureGoal = 0.85*38600
-warnsaturation = 64000
+exposureGoal = 0.85*2**16
 warnsaturation = 37700
+warnsaturation = 64000
 
 class Filters:
-	NoFilter = 1 # 7  on Todd's wheel's, 1 on MegaVision # Positions 1-7, not index 0-6
+	NoFilter = 7 # 7  on Todd's wheel's, 1 on MegaVision # Positions 1-7, not index 0-6
 	WrattenBlue98 = 2
 	WrattenGreen61 = 3
 	WrattenRed25 = 4
