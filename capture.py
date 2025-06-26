@@ -43,6 +43,10 @@ if __name__ == "__main__":
 		import libqhy 
 		camera = libqhy.Qhyccd()
 		camera.session(config,args.target)
+	if config['sensor'].lower().startswith('q15'):
+		import libqhy 
+		camera = libqhy.Qhyccd()
+		camera.session(config,args.target)
 	elif config['sensor'].lower().startswith('canon'):
 		from libcanon import Canon 
 		camera = Canon(config,args.target)

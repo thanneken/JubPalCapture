@@ -1,0 +1,28 @@
+# white6500-NoFilter-200ms
+# white2800-NoFilter-230ms
+# uv385-NoFilter-12500ms
+# uv405-NoFilter-590ms
+# blue475-NoFilter-180ms
+# ir730-NoFilter-500ms
+# ir850-NoFilter-750ms
+# ir940-NoFilter-2450ms
+# white6500Left-NoFilter-320ms
+# white6500Right-NoFilter-430ms
+
+# white6500-MegaVisionRed-4000ms
+# white2800-MegaVisionRed-1950ms
+# uv385-MegaVisionRed-30000ms
+# uv405-MegaVisionRed-30000ms
+# ir730-MegaVisionRed-1750ms
+# 
+# white6500-MegaVisionGreen-5000ms
+# white2800-MegaVisionGreen-6000ms
+# uv385-MegaVisionGreen-30000ms
+# uv405-MegaVisionGreen-30000ms
+# blue475-MegaVisionGreen-23000ms
+# 
+# white6500-MegaVisionBlue-4400ms
+# white2800-MegaVisionBlue-14000ms
+# uv385-MegaVisionBlue-30000ms
+# uv405-MegaVisionBlue-5000ms
+# blue475-MegaVisionBlue-1500ms

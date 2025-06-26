@@ -1,8 +1,8 @@
-sensor: QHY411
+sensor: Q15
 lens: MegaVision120
-lights: Overhead
+lights: Octopus
 aperture: F11
-cool: -1
+cool: 50
 gain: 26
 basepath: /mnt/fractal
 

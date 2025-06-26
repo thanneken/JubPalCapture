@@ -17,6 +17,8 @@
 				<label for="WrattenInfrared87C">Wratten Infrared87C</label>
 				<input type="radio" name="filterwheel" value="WrattenBlue98" id="WrattenBlue98" {%if filterwheel== 'WrattenBlue98' %}checked{% endif %}/>
 				<label for="WrattenBlue98">WrattenBlue98</label>
+				<input type="radio" name="filterwheel" value="Position1" id="Position1" {%if filterwheel== 'Position1' %}checked{% endif %}/>
+				<label for "Position1">Position1</label>
 			</div>
 			<div>
 				<input type="radio" name="scope" value="full" id="full" {% if scope == 'full' %}checked{% endif %}/>
@@ -37,7 +39,7 @@
 				<label for="scale">Scale</label>
 			</div>
 			<div>
-				<input type="range" id="exposure" name="exposure" min="1" max="1000" value="{{exposure}}" step="10"/>
+				<input type="range" id="exposure" name="exposure" min="1" max="4000" value="{{exposure}}" step="10"/>
 				<label for="exposure">Exposure</label>
 			</div>
 			<div>

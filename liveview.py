@@ -12,6 +12,7 @@ scale = float(1)
 roiYPct = float(0.5)
 roiXPct = float(0.5)
 filterwheel = 'NoFilter'
+filterwheel = 'Position1'
 
 def initializeWebcam():
 	global camera,width,height,roiX,roiY,roiH,roiW,binXY
@@ -29,6 +30,7 @@ def initializeQhy():
 	global camera,exposure,binXY,roiX,roiY,width,height,roiW,roiH,cameraName,filterwheel
 	if not camera:
 		exposure = 16
+		exposure = 1
 		import libqhy 
 		camera = libqhy.Qhyccd()
 		camera.connect(1) # 1 is stream, 0 is single frame
@@ -39,6 +41,14 @@ def initializeQhy():
 			width = 3856
 			binXY = 2 
 			camera.SetGain(78)  # factory was 30, 78 on demo and appears to be optimal point on graphs
+			roiX = 0
+			roiY = 0
+		elif cameraName.startswith('QHY411'):
+			print("Applying settings for QHY411")
+			height = 10656
+			width = 14208
+			camera.SetGain(26)
+			binXY = 4
 			roiX = 0
 			roiY = 0
 		else:
@@ -288,6 +298,7 @@ def qhylive():
 			exit()
 	elif request.method == 'GET':
 		exposure = 32
+		exposure = 2
 		pass
 	return render_template('liveview.html',scale=scale,system=system,exposure=exposure,roiYPct=roiYPct,roiXPct=roiXPct,scope=scope,filterwheel=filterwheel) 
 
