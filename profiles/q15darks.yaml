@@ -4,4 +4,4 @@ lights: NoLights
 aperture: FNone
 cool: 50
 gain: 26
-basepath: /mnt/fractal
+basepath: /storage/Pictures
