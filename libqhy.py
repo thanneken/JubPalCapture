@@ -11,7 +11,7 @@ variant = 'trh'
 
 verbose = 9
 linearityHDR = False
-if variant == 'megavision'
+if variant == 'megavision':
 	exposureGoal = 0.85*38600
 	warnsaturation = 37700
 else:
@@ -19,7 +19,7 @@ else:
 	warnsaturation = 64000
 
 class Filters:
-	if variant = 'megavision':
+	if variant == 'megavision':
 		NoFilter = 1 # 7  on Todd's wheel's, 1 on MegaVision 
 		MegaVisionRed = 1
 		MegaVisionGreen = 1
