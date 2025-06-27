@@ -5,8 +5,8 @@ import cv2
 from threading import Thread
 import numpy as np
 
-variation = 'qhy'
 variation = 'megavision'
+variation = 'qhy'
 
 global height,width,scale,roiY,roiH,roiX,roiW,camera,gracefulStop,exposure,roiYPct,roiXPct,filterwheel
 camera = False
@@ -52,7 +52,8 @@ def initializeQhy():
 			print("Applying settings for QHY411")
 			height = 10656
 			width = 14208
-			camera.SetGain(26)
+			camera.SetReadMode(0) 
+			camera.SetGain(0)
 			binXY = 4
 			roiX = 0
 			roiY = 0

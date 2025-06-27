@@ -6,8 +6,8 @@ from os import makedirs, path
 from skimage import io
 from datetime import datetime
 
-variant = 'megavision'
 variant = 'trh'
+variant = 'megavision'
 
 verbose = 9
 linearityHDR = False
@@ -181,8 +181,9 @@ class Qhyccd():
 		""" Return live image """
 		self.sdk.GetQHYCCDLiveFrame(self.cam, byref(self.roi_h), byref(self.roi_w), 
 			byref(self.bpp), byref(self.channels), self.imgdata)
-		if False:
+		if True:
 			print(f"LIBQHY: Sending live frame with max value {np.max(self.imgdata)}")
+			time.sleep(1)
 		return np.asarray(self.imgdata)
 
 	def StopLive(self):
