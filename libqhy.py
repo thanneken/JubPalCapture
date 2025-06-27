@@ -6,24 +6,32 @@ from os import makedirs, path
 from skimage import io
 from datetime import datetime
 
+variant = 'megavision'
+variant = 'trh'
+
 verbose = 9
 linearityHDR = False
-exposureGoal = 0.85*38600
-exposureGoal = 0.85*2**16
-warnsaturation = 37700
-warnsaturation = 64000
+if variant == 'megavision'
+	exposureGoal = 0.85*38600
+	warnsaturation = 37700
+else:
+	exposureGoal = 0.85*2**16
+	warnsaturation = 64000
 
 class Filters:
-	NoFilter = 7 # 7  on Todd's wheel's, 1 on MegaVision # Positions 1-7, not index 0-6
-	WrattenBlue98 = 2
-	WrattenGreen61 = 3
-	WrattenRed25 = 4
-	WrattenInfrared87 = 5
-	WrattenInfrared87C = 6
-	Position1 = 1
-	MegaVisionRed = 1
-	MegaVisionGreen = 1
-	MegaVisionBlue = 1
+	if variant = 'megavision':
+		NoFilter = 1 # 7  on Todd's wheel's, 1 on MegaVision 
+		MegaVisionRed = 1
+		MegaVisionGreen = 1
+		MegaVisionBlue = 1
+	else:
+		NoFilter = 7 # Positions 1-7, not index 0-6
+		WrattenBlue98 = 2
+		WrattenGreen61 = 3
+		WrattenRed25 = 4
+		WrattenInfrared87 = 5
+		WrattenInfrared87C = 6
+		Position1 = 1
 
 class Qhyccd():
 	def __init__(self):

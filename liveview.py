@@ -5,14 +5,19 @@ import cv2
 from threading import Thread
 import numpy as np
 
+variation = 'qhy'
+variation = 'megavision'
+
 global height,width,scale,roiY,roiH,roiX,roiW,camera,gracefulStop,exposure,roiYPct,roiXPct,filterwheel
 camera = False
 gracefulStop = False
 scale = float(1)
 roiYPct = float(0.5)
 roiXPct = float(0.5)
-filterwheel = 'Position1'
-filterwheel = 'NoFilter'
+if variation == 'megavision':
+	filterwheel = 'Position1'
+else:
+	filterwheel = 'NoFilter'
 
 def initializeWebcam():
 	global camera,width,height,roiX,roiY,roiH,roiW,binXY
@@ -29,8 +34,7 @@ def initializeWebcam():
 def initializeQhy(): 
 	global camera,exposure,binXY,roiX,roiY,width,height,roiW,roiH,cameraName,filterwheel
 	if not camera:
-		exposure = 1
-		exposure = 16
+		exposure = 16 # exposure = 1
 		import libqhy 
 		camera = libqhy.Qhyccd()
 		camera.connect(1) # 1 is stream, 0 is single frame
@@ -69,7 +73,7 @@ def initializeQhy():
 		camera.SetBinMode(binXY,binXY) 
 		camera.SetROI(roiX,roiY,roiW,roiH)
 		camera.SetExposure(int(exposure/(binXY**2)))
-		 
+
 def initializePixelink():
 	global camera,exposure,binXY,roiX,roiY,width,height,roiW,roiH,cameraName,filterwheel
 	if not camera:
@@ -298,9 +302,7 @@ def qhylive():
 			closeQhy()
 			exit()
 	elif request.method == 'GET':
-		exposure = 2
 		exposure = 32
-		pass
 	return render_template('liveview.html',scale=scale,system=system,exposure=exposure,roiYPct=roiYPct,roiXPct=roiXPct,scope=scope,filterwheel=filterwheel) 
 
 @app.route('/pixelink/live',methods=['POST','GET'])
