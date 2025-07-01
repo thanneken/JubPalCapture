@@ -4,6 +4,7 @@ from datetime import datetime
 import PySpin
 import numpy as np
 from skimage import io
+import math
 
 """
 https://softwareservices.flir.com/FFY-U3-04S2/latest/Model/public/ImageFormatControl.html
@@ -14,6 +15,8 @@ Acquisition Modes
 		self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
 	multi-frame
 """
+
+verbose = True
 
 class Flir():
 
@@ -33,7 +36,12 @@ class Flir():
 		self.camera.ExposureTime.SetValue(1000000) # Necessary?
 		self.camera.GainAuto.SetValue(PySpin.GainAuto_Off)
 		self.camera.AutoExposureTargetGreyValueAuto.SetValue(PySpin.AutoExposureTargetGreyValueAuto_Off)
-		self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_SingleFrame) # what about live view?
+		if False:
+			print("Using SingleFrame Acquisition Mode")
+			self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_SingleFrame) 
+		if True:
+			print("Using Continuous Acquisition Mode")
+			self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous) 
 		self.camera.GammaEnable.SetValue(False)
 		self.camera.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)
 		sNodemap = self.camera.GetTLStreamNodeMap()
@@ -67,6 +75,9 @@ class Flir():
 		print("Height in pixels: %s"%(self.camera.Height.GetMax()))
 
 	def GetLiveFrame(self):
+		while not self.camera.IsStreaming():
+			print("Giving the camera two seconds to catch up")
+			time.sleep(2)
 		image_result = self.camera.GetNextImage()
 		while image_result.IsIncomplete():
 			print("Waiting for complete image")
@@ -88,7 +99,7 @@ class Flir():
 			image_result = self.camera.GetNextImage()
 		img = image_result.GetNDArray()
 		image_result.Release()
-		if True:
+		if False: # singleframe acquisition mode required restarting stream after each frame
 			if self.camera.IsStreaming():
 				print("Restarting Stream")
 				self.camera.EndAcquisition()
@@ -146,17 +157,25 @@ class Flir():
 	def setWheel(self,wheelNewPosition): 
 		print("No wheel to set")
 
+	def evenInteger(self,n):
+		return math.ceil(n / 4) * 4
+
 	def SetROI(self,roiX,roiY,roiW,roiH):
-		if False:
-			self.camera.RoiEnable.SetValue(True)
-		if False:
+		if self.camera.IsStreaming():
+			self.camera.EndAcquisition()
+			print("Ending acquisition")
+		if True:
 			print(f"Changing ROI to x,y,w,h = {roiX},{roiY},{roiW},{roiH}")
-			self.camera.OffsetX.SetValue(roiX)
-			self.camera.OffsetY.SetValue(roiY)
-			self.camera.Height.SetValue(roiH)
-			self.camera.Width.SetValue(roiW)
-		print("ROI not yet successfully implemented")
-		pass
+			self.camera.OffsetX.SetValue(self.evenInteger(roiX))
+			self.camera.OffsetY.SetValue(self.evenInteger(roiY))
+			self.camera.Height.SetValue(self.evenInteger(roiH))
+			self.camera.Width.SetValue(self.evenInteger(roiW))
+		print("Starting acquisition")
+		self.camera.BeginAcquisition()
+		if False:
+			time.sleep(2)
+			print("ROI not yet successfully implemented")
+			pass
 
 	def SetBit(self,bpp):
 		"""
@@ -172,24 +191,18 @@ class Flir():
 	def SetBinMode(self,binX,binY):
 		if self.camera.IsStreaming():
 			self.camera.EndAcquisition()
-		print(f"Setting binning to {binX} × {binY}")
+			print("Ending acquisition")
 		if True:
-			if binX != 1:
-				print("Pixel binning not yet successfully implemented")
-				binX = binY = 1
-		if True:
-			self.camera.BinningSelector.SetValue(PySpin.BinningSelector_Sensor)
-			print(f"{PySpin.BinningHorizontalMode_Sum=}")
-		if True:
+			print(f"Setting binning to {binX} × {binY}")
+			self.camera.BinningSelector.SetValue(PySpin.BinningSelector_All) # Sensor
 			self.camera.BinningHorizontalMode.SetValue(PySpin.BinningHorizontalMode_Sum) # Additive better for short exposures, Average better for SNR
 			self.camera.BinningVerticalMode.SetValue(PySpin.BinningVerticalMode_Sum) # self.camera.BinningVerticalMode.SetValue('Additive')
-			print(f"{binX=}")
 			self.camera.BinningHorizontal.SetValue(int(binX))
 			self.camera.BinningVertical.SetValue(binY)
+		print("Starting acquisition")
 		self.camera.BeginAcquisition()
 
 	def SetExposure(self,exposure):
-		print(f"Setting exposure to {exposure}ms")
 		self.camera.ExposureTime.SetValue(int(exposure)*1000) # camera takes microseonds
 
 if __name__ == "__main__":

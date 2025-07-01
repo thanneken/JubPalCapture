@@ -111,15 +111,16 @@ def initializeFlir():
 		cameraName = 'Flir'
 		height = 3648
 		width = 5472
-		binXY = 2 
+		binXY = 4
 		roiX = 0
 		roiY = 0
 		roiX = int(roiX/binXY)
 		roiY = int(roiY/binXY)
 		roiW = int(width/binXY)
 		roiH = int(height/binXY)
-		camera.SetBinMode(binXY,binXY) 
-		camera.SetROI(roiX,roiY,roiW,roiH)
+		if True:
+			camera.SetBinMode(binXY,binXY) 
+			camera.SetROI(roiX,roiY,roiW,roiH)
 		camera.SetExposure(int(exposure/(binXY**2)))
 
 def closeWebcam():
@@ -375,15 +376,17 @@ def flirlive():
 			thread.start()
 			return redirect(url_for('index'))
 		elif scope == 'full':
+			print("Starting procedure for prepping a full image")
 			if not camera:
 				initializeFlir()
-			binXY = 2
-			camera.SetBinMode(binXY,binXY) 
-			roiX = 0
-			roiY = 0
-			roiW = int(width/binXY)
-			roiH = int(height/binXY)
-			camera.SetROI(roiX,roiY,roiW,roiH)
+			if True:
+				binXY = 4
+				camera.SetBinMode(binXY,binXY) 
+				roiX = 0
+				roiY = 0
+				roiW = int(width/binXY)
+				roiH = int(height/binXY)
+				camera.SetROI(roiX,roiY,roiW,roiH)
 			exposure = int(request.form.get('exposure'))
 			print("Setting exposure to %s"%(int(exposure/(binXY**2))))
 			camera.SetExposure(int(exposure/(binXY**2)))
@@ -435,6 +438,7 @@ def feedPixelink():
 
 @app.route('/flir/feed')
 def feedFlir():
+	print("Initializing Flir")
 	initializeFlir()
 	return Response(framesFlir(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
