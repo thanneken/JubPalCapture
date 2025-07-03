@@ -17,6 +17,7 @@ Acquisition Modes
 """
 
 verbose = True
+reportheader = '___MS__|_MAYBE_|_98THP_|__SAT__|__MIN__|__MAX__|______LIGHT______|______FILTER_____'
 
 class Flir():
 
@@ -111,7 +112,8 @@ class Flir():
 			exposureGoal = 0.85*2**16 # might be 2**12 on flir
 			suggestion = exposureGoal*int(exposure)/np.percentile(img,98)
 			saturatedpct = 100 * np.count_nonzero(img > 64000) / np.count_nonzero(img) # might be lower on flir
-			report = f"{light:-<10}{wheel:-<10}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
+			report = f"{exposure:_>6}_|{suggestion:_>6.0f}_|{np.percentile(img,98):_>6.0f}_|{saturatedpct:_>5.1f}%_|{np.min(img):_>6}_|{np.max(img):_>6}_|{light:_^17}|{wheel:_^17}" # report = f"{light:-<10}{wheel:-<10}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above 64000, consider {suggestion:5.0f}"
+			print(reportheader)
 			print(report)
 			self.reports.append(report)
 		directory = os.path.join(self.config['basepath'],self.target,'Raw')
@@ -138,6 +140,7 @@ class Flir():
 		io.imsave(outfilePath,img,check_contrast=False)
 
 	def close(self):
+		print(reportheader)
 		for report in self.reports:
 			print(report)
 		print("Closing Flir camera")

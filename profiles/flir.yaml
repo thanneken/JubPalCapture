@@ -1,6 +1,6 @@
 sensor: Flir
 lens: Schneider23
-lights: Misha
+lights: Overhead
 aperture: F11
 gain: 11
-basepath: /mnt/fractal
+basepath: /home/thanneken/Pictures
