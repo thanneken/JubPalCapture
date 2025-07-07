@@ -1,6 +1,6 @@
 sensor: Flir
-lens: Schneider23
-lights: Overhead
+lens: EFS24
+lights: Octopus
 aperture: F11
 gain: 11
 basepath: /home/thanneken/Pictures

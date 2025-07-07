@@ -110,6 +110,6 @@ if __name__ == "__main__":
 			lightProcess.join()
 		if True:
 			lightArray.off()
-	lightArray.close()
 	camera.close()
+	lightArray.close()
 

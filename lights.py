@@ -24,6 +24,8 @@ class Octopus: # Arduino is the default Octopus, specify 2023 or Bluetooth for v
 		self.uv405 = (4,9)
 		self.port5 = (5,9)
 		self.blue475 = (5,9)
+		self.blue475Right = (5,1)
+		self.blue475Left = (5,0)
 		self.port6 = (6,9)
 		self.ir730 = (6,9)
 		self.port7 = (7,9)

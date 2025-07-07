@@ -1,0 +1,10 @@
+white6500-NoFilter-110ms
+white2800-NoFilter-130ms
+uv385-NoFilter-5900ms
+uv405-NoFilter-280ms
+blue475-NoFilter-90ms
+ir730-NoFilter-380ms
+ir850-NoFilter-520ms
+ir940-NoFilter-1780ms
+white6500Left-NoFilter-280ms
+white6500Right-NoFilter-180ms

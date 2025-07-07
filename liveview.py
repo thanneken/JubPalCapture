@@ -379,7 +379,7 @@ def flirlive():
 			print("Starting procedure for prepping a full image")
 			if not camera:
 				initializeFlir()
-			if True:
+			if binXY != 4:
 				binXY = 4
 				camera.SetBinMode(binXY,binXY) 
 				roiX = 0

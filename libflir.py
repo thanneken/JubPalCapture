@@ -37,12 +37,6 @@ class Flir():
 		self.camera.ExposureTime.SetValue(1000000) # Necessary?
 		self.camera.GainAuto.SetValue(PySpin.GainAuto_Off)
 		self.camera.AutoExposureTargetGreyValueAuto.SetValue(PySpin.AutoExposureTargetGreyValueAuto_Off)
-		if False:
-			print("Using SingleFrame Acquisition Mode")
-			self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_SingleFrame) 
-		if True:
-			print("Using Continuous Acquisition Mode")
-			self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous) 
 		self.camera.GammaEnable.SetValue(False)
 		self.camera.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)
 		sNodemap = self.camera.GetTLStreamNodeMap()
@@ -57,6 +51,12 @@ class Flir():
 		self.target = target
 		self.reports = []
 		offset = 1.5
+		if target == 'liveview':
+			print("Using Continuous Acquisition Mode")
+			self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous) 
+		else:
+			print("Using SingleFrame Acquisition Mode")
+			self.camera.AcquisitionMode.SetValue(PySpin.AcquisitionMode_SingleFrame) 
 		print(f"Setting offset to {offset}")
 		self.camera.BlackLevel.SetValue(offset)
 		if 'gain' in config:
@@ -69,13 +69,17 @@ class Flir():
 			self.SetBit(config['bpp'])
 		else:
 			self.SetBit(16)
-		self.SetBinMode(1,1) # self.camera.BeginAcquisition() is done by SetBinMode
+		self.SetBinMode(1,1) 
 
 	def showInfo(self):
 		print("Width in pixels: %s"%(self.camera.Width.GetMax()))
 		print("Height in pixels: %s"%(self.camera.Height.GetMax()))
 
 	def GetLiveFrame(self):
+		if not self.camera.IsStreaming():
+			print("Begin Acquisition")
+			self.camera.BeginAcquisition()
+			time.sleep(2)
 		while not self.camera.IsStreaming():
 			print("Giving the camera two seconds to catch up")
 			time.sleep(2)
@@ -91,7 +95,12 @@ class Flir():
 		return img
 
 	def shoot(self,light,wheel,exposure):
+		if exposure > 29900:
+			print("Flir cannot accept exposure times longer than 29.9 seconds. Capping...")
+			exposure = 29900
 		self.SetExposure(exposure)# self.SetExposure(self,exposure)
+		if True:
+			self.camera.BeginAcquisition()
 		print("Shooting for %sms"%(exposure))
 		image_result = self.camera.GetNextImage()
 		while image_result.IsIncomplete():
@@ -100,12 +109,8 @@ class Flir():
 			image_result = self.camera.GetNextImage()
 		img = image_result.GetNDArray()
 		image_result.Release()
-		if False: # singleframe acquisition mode required restarting stream after each frame
-			if self.camera.IsStreaming():
-				print("Restarting Stream")
-				self.camera.EndAcquisition()
-				time.sleep(2)
-				self.camera.BeginAcquisition()
+		if True:
+			self.camera.EndAcquisition()
 		if self.rotate:
 			np.rot90(img,2)
 		if True:
@@ -173,12 +178,6 @@ class Flir():
 			self.camera.OffsetY.SetValue(self.evenInteger(roiY))
 			self.camera.Height.SetValue(self.evenInteger(roiH))
 			self.camera.Width.SetValue(self.evenInteger(roiW))
-		print("Starting acquisition")
-		self.camera.BeginAcquisition()
-		if False:
-			time.sleep(2)
-			print("ROI not yet successfully implemented")
-			pass
 
 	def SetBit(self,bpp):
 		"""
@@ -202,8 +201,6 @@ class Flir():
 			self.camera.BinningVerticalMode.SetValue(PySpin.BinningVerticalMode_Sum) # self.camera.BinningVerticalMode.SetValue('Additive')
 			self.camera.BinningHorizontal.SetValue(int(binX))
 			self.camera.BinningVertical.SetValue(binY)
-		print("Starting acquisition")
-		self.camera.BeginAcquisition()
 
 	def SetExposure(self,exposure):
 		self.camera.ExposureTime.SetValue(int(exposure)*1000) # camera takes microseonds

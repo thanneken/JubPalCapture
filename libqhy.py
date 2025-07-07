@@ -6,10 +6,12 @@ from os import makedirs, path
 from skimage import io
 from datetime import datetime
 
-variant = 'trh'
 variant = 'megavision'
+variant = 'trh'
 
-verbose = 9
+reportheader = '___MS__|_MAYBE_|_98THP_|__SAT__|__MIN__|__MAX__|______LIGHT______|______FILTER_____'
+
+verbose = 3
 linearityHDR = False
 if variant == 'megavision':
 	exposureGoal = 0.85*38600
@@ -181,7 +183,7 @@ class Qhyccd():
 		""" Return live image """
 		self.sdk.GetQHYCCDLiveFrame(self.cam, byref(self.roi_h), byref(self.roi_w), 
 			byref(self.bpp), byref(self.channels), self.imgdata)
-		if True:
+		if variant == 'megavision':
 			print(f"LIBQHY: Sending live frame with max value {np.max(self.imgdata)}")
 			time.sleep(1)
 		return np.asarray(self.imgdata)
@@ -193,6 +195,7 @@ class Qhyccd():
 
 	""" Relase camera and close sdk """
 	def close(self):
+		print(reportheader)
 		for report in self.reports:
 			print(report)
 		print("Closing %s"%(bytes(self.id).decode()))
@@ -345,10 +348,13 @@ class Qhyccd():
 		if False:
 			print("Image has shape and type %s %s"%(img.shape,img.dtype))
 			print("Numpy object has shape %s, dtype %s, range %s - %s, median %s with standard deviation %s"%(img.shape,img.dtype,np.min(img),np.max(img),np.median(img),np.std(img)))
+		if False:
+			report = f"{light:-<10}{wheel:-<11}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above {warnsaturation}, consider {suggestion:5.0f}"
 		if True:
 			suggestion = exposureGoal*int(exposure)/np.percentile(img,98)
 			saturatedpct = 100 * np.count_nonzero(img > warnsaturation) / np.count_nonzero(img)
-			report = f"{light:-<10}{wheel:-<11}{exposure:->5}ms pixel values range {np.min(img):>5} - {np.max(img):5} with 98th percentile of {np.percentile(img,98):>5.0f} and {saturatedpct:>3.1f}% of pixels above {warnsaturation}, consider {suggestion:5.0f}"
+			report = f"{exposure:_>6}_|{suggestion:_>6.0f}_|{np.percentile(img,98):_>6.0f}_|{saturatedpct:_>5.1f}%_|{np.min(img):_>6}_|{np.max(img):_>6}_|{light:_^17}|{wheel:_^17}" 
+			print(reportheader)
 			print(report)
 			self.reports.append(report)
 		directory = path.join(self.config['basepath'],self.target,'Raw')
