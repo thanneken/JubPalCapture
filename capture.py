@@ -111,7 +111,7 @@ if __name__ == "__main__":
 			lightProcess.join()
 		if True:
 			lightArray.off()
-		if args.worklights and config['lights'].lower().startswith('octopus'):
-			lightArray.manualon('white6500')
+	if args.worklights and config['lights'].lower().startswith('octopus'):
+		lightArray.manualon('white6500')
 	camera.close()
 	lightArray.close()
