@@ -15,6 +15,7 @@ def getArguments():
 	parser.add_argument('-s','--shotlist')
 	parser.add_argument('-t','--target')
 	parser.add_argument('-v','--verbose',action='store_true')
+	parser.add_argument('-w','--worklights',action='store_true')
 	return parser.parse_args()
 
 if __name__ == "__main__":
@@ -110,6 +111,7 @@ if __name__ == "__main__":
 			lightProcess.join()
 		if True:
 			lightArray.off()
+		if args.worklights and config['lights'].lower().startswith('octopus'):
+			lightArray.manualon('white6500')
 	camera.close()
 	lightArray.close()
-
