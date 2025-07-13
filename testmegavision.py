@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import time
 
-mcp2210serial = '0000134062' # This will need to be edited based either on scan serial port descriptions (below) or the Microchip Utility Software
+mcp2210serial = '0000134062' # If not automatically detected, this will need to be edited based either on scan serial port descriptions (below) or the Microchip Utility Software
 scanSerialPortDescriptions = True
 scanMicrochip2210 = True
 pause = 5 # seconds between attempts to send commands
@@ -29,7 +29,8 @@ if scanSerialPortDescriptions:
 	for port in ports:
 		print(f"{port.name=} {port.description=} {port.serial_number=} {port.manufacturer=} {port.product=}")
 		if 'spectra' in port.description.lower(): # edit this line if a port description other than Spectra looks promising
-			print("Found a port with Spectra in the description, attempting to connect")
+			print("Found a port with Spectra in the description, saving serial number and attempting to connect")
+			mcp2210serial = port.serial_number
 			try:
 				serialConnection = serial.Serial(port.device,115200)
 				if not serialConnection.isOpen():
