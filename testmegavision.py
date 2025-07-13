@@ -42,7 +42,7 @@ if scanSerialPortDescriptions:
 			try:
 				for spiCodeCandidate in spiCodeCandidates:
 					print(f"Sending {spiCodeCandidate} as bytes")
-					serialConnection.write(bytes(spiCodeCAndidate))
+					serialConnection.write(bytes(spiCodeCandidate))
 					print(f"Waiting {pause} seconds")
 					time.sleep(pause)
 			except:
