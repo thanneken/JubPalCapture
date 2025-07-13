@@ -1,7 +1,7 @@
-uv385-WrattenBlue98-30000ms
-uv385-WrattenGreen61-30000ms
-uv405-WrattenGreen61-30000ms
-uv385-WrattenRed25-30000ms
-uv405-WrattenRed25-30000ms
-white6500-WrattenInfrared87-30000ms
-white6500-WrattenInfrared87C-30000ms
+uv385-WrattenBlue98-90000ms
+uv385-WrattenGreen61-90000ms
+uv405-WrattenGreen61-90000ms
+uv385-WrattenRed25-90000ms
+uv405-WrattenRed25-90000ms
+white6500-WrattenInfrared87-90000ms
+white6500-WrattenInfrared87C-90000ms

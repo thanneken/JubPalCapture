@@ -17,6 +17,7 @@ if variant == 'megavision':
 	exposureGoal = 0.85*38600
 	warnsaturation = 37700
 else:
+	exposureGoal = 0.5*2**16
 	exposureGoal = 0.85*2**16
 	warnsaturation = 64000
 

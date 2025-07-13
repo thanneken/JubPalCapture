@@ -1,0 +1,21 @@
+# see also octopus-600-milvus-fl.txt
+white6500-NoFilter-550ms
+white2800-NoFilter-800ms
+uv385-NoFilter-36000ms
+uv405-NoFilter-1400ms
+blue475-NoFilter-600ms
+ir730-NoFilter-1000ms
+ir850-NoFilter-6500ms
+ir940-NoFilter-15000ms
+white6500Left-NoFilter-900ms
+white6500Right-NoFilter-800ms
+white6500-WrattenBlue98-5000ms
+white2800-WrattenBlue98-36000ms
+uv405-WrattenBlue98-7000ms
+blue475-WrattenBlue98-5000ms
+white6500-WrattenGreen61-2000ms
+white2800-WrattenGreen61-4000ms
+blue475-WrattenGreen61-24000ms
+white6500-WrattenRed25-2800ms
+white2800-WrattenRed25-2000ms
+ir730-WrattenRed25-1000ms
