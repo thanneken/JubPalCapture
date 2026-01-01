@@ -3,6 +3,7 @@ import sys
 import os
 from skimage import io, img_as_uint, img_as_float32
 import numpy as np
+import rawpy
 
 verbose = 4
 convention = {'source':'DarkSubtracted','flatid':'midfilename'}
@@ -36,14 +37,23 @@ def flattenimg(unflatimg,flatimg):
 		print(f"Flatened image has range {np.min(flattenedimg)} - {np.max(flattenedimg)}")
 	return flattenedimg
 
+def openImageFile(path):
+	if path.endswith('.dng'):
+		with rawpy.imread(path) as raw:
+			return raw.raw_image.copy() 
+	else:
+			return io.imread(path)
+
 def flattenfile(unflatpath,flatpath,flattenedpath):
 	if verbose > 4:
 		print(f"+ {unflatpath}")
 		print(f"- {flatpath}")
-	unflatimg = io.imread(unflatpath)
-	flatimg = io.imread(flatpath)
+	unflatimg = openImageFile(unflatpath)
+	flatimg = openImageFile(flatpath)
 	flattenedimg = flattenimg(unflatimg,flatimg)
 	flatteneddir = os.path.split(flattenedpath)[0]
+	if flattenedpath.endswith('.dng'):
+		flattenedpath = flattenedpath[:-4]+'.tif'
 	if not os.path.isdir(flatteneddir):
 		if verbose > 3: 
 			print(f"Creating directory {flatteneddir}")
@@ -79,6 +89,8 @@ if __name__ == "__main__":
 				unflatpath = os.path.join(targetdir,convention['source'],unflatfile)
 				flatpath = os.path.join(targetdir,flatpath)
 				flattenedpath = unflatpath.replace(convention['source'],'Flattened')
+				if flattenedpath.endswith('.dng'):
+					flattenedpath = flattenedpath[:-4]+'.tif'
 				if not os.path.isfile(unflatpath):
 					print(f"Error finding {unflatpath=}")
 					continue
