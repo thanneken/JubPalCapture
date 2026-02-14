@@ -35,6 +35,7 @@ class Flir():
 		self.camera.Init()
 		self.camera.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
 		self.camera.ExposureTime.SetValue(1000000) # Necessary?
+		self.SetROI(0,0,self.camera.WidthMax.GetValue(),self.camera.HeightMax.GetValue())
 		self.camera.GainAuto.SetValue(PySpin.GainAuto_Off)
 		self.camera.AutoExposureTargetGreyValueAuto.SetValue(PySpin.AutoExposureTargetGreyValueAuto_Off)
 		self.camera.GammaEnable.SetValue(False)
