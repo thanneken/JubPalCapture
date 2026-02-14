@@ -1,4 +1,4 @@
-#!usr/bin/env python
+#!/usr/bin/env python
 from flask import Flask, render_template, request, Response, redirect, url_for
 import time
 import cv2

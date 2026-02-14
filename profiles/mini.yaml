@@ -1,7 +1,7 @@
 sensor: QHYmini
-lens: Schneider23
-lights: Octopus
-aperture: F11
+lens: Milvus50
+lights: NoLights
+aperture: F5
 cool: -10
 gain: 26
 basepath: /home/thanneken/Pictures

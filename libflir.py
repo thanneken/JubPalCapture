@@ -172,12 +172,14 @@ class Flir():
 		if self.camera.IsStreaming():
 			self.camera.EndAcquisition()
 			print("Ending acquisition")
-		if True:
-			print(f"Changing ROI to x,y,w,h = {roiX},{roiY},{roiW},{roiH}")
-			self.camera.OffsetX.SetValue(self.evenInteger(roiX))
-			self.camera.OffsetY.SetValue(self.evenInteger(roiY))
-			self.camera.Height.SetValue(self.evenInteger(roiH))
+		print(f"Changing ROI to x,y,w,h = {roiX},{roiY},{roiW},{roiH}")
+		self.camera.OffsetX.SetValue(self.evenInteger(roiX))
+		self.camera.OffsetY.SetValue(self.evenInteger(roiY))
+		if PySpin.IsWritable(self.camera.Width):
 			self.camera.Width.SetValue(self.evenInteger(roiW))
+			self.camera.Height.SetValue(self.evenInteger(roiH))
+		else:
+			print("Width cannot be changed at this time")
 
 	def SetBit(self,bpp):
 		"""
