@@ -10,6 +10,7 @@ from edsdk import (CameraCommand, ObjectEvent, FileCreateDisposition, Access, Ed
 
 verbose = 2
 exposureGoal = 0.85*2**14 # possibly different for R7
+warnsaturation = 0.98*2**14
 reportheader = '___MS__|_MAYBE_|_98THP_|__SAT__|__MIN__|__MAX__|______LIGHT______|______FILTER_____'
 
 class Canon:
@@ -190,8 +191,11 @@ class Canon:
 						timestamp+'.'+fileExtension])
 				outfilePath = path.join(directory,outfileName)
 				print(f"Saving {outfilePath}") if verbose > 3 else None
-				io.imsave(path.join(directory,outfilePath),raw.raw_image.copy(),check_contrast=False)
-				report = f"{exposure:_>6}_|{suggestion:_>6.0f}_|{np.percentile(img,98):_>6.0f}_|{saturatedpct:_>5.1f}%_|{np.min(img):_>6}_|{np.max(img):_>6}_|{light:_^17}|{wheel:_^17}" # report = f">>> {self.light:<15} 98th percentile of raw image is {np.percentile(raw.raw_image.copy(),98):>5.0f} after {self.exposure:>5.0f}, consider {exposureGoal*self.exposure/np.percentile(raw.raw_image.copy(),98):5.0f}"
+				img = raw.raw_image.copy()
+				io.imsave(path.join(directory,outfilePath),img,check_contrast=False)
+				suggestion = exposureGoal*int(self.exposure)/np.percentile(img,98)
+				saturatedpct = 100 * np.count_nonzero(img > warnsaturation) / np.count_nonzero(img)
+				report = f"{self.exposure:_>6}_|{suggestion:_>6.0f}_|{np.percentile(img,98):_>6.0f}_|{saturatedpct:_>5.1f}%_|{np.min(img):_>6}_|{np.max(img):_>6}_|{self.light:_^17}|{self.wheel:_^17}" 
 				print(reportheader)
 				print(report)
 				self.reports.append(report)

@@ -1,6 +1,6 @@
-sensor: SpencerR7
-lens: Milvus50
-lights: Octopus
+sensor: CanonT1i
+lens: EFS24
+lights: NoLights
 aperture: F11
 gain: ISO400
-basepath: /mnt/fractal
+basepath: /home/thanneken/Pictures

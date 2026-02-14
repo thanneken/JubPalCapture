@@ -3,4 +3,4 @@
 # NoLight-WrattenGreen61-60ms
 # NoLight-WrattenRed25-30ms
 # NoLight-WrattenInfrared87-70ms
-NoLight-NoFilter-6ms
+NoLight-BayerRGGB-50ms
