@@ -11,6 +11,7 @@ from edsdk import (CameraCommand, ObjectEvent, FileCreateDisposition, Access, Ed
 verbose = 2
 exposureGoal = 0.85*2**14 # possibly different for R7
 warnsaturation = 0.98*2**14
+saveToHost = True # If true then copies image data directly to computer host without saving to SD card on camera first
 reportheader = '___MS__|_MAYBE_|_98THP_|__SAT__|__MIN__|__MAX__|______LIGHT______|______FILTER_____'
 
 class Canon:
@@ -44,6 +45,9 @@ class Canon:
 			edsdk.OpenSession(self.camera)
 			print("Setting object event handler")
 			edsdk.SetObjectEventHandler(self.camera, ObjectEvent.All, self.callback_object)
+			if saveToHost:
+				edsdk.SetPropertyData(self.camera,PropID.SaveTo,0,SaveTo.Host)
+				edsdk.SetCapacity(self.camera,{"reset":True,"bytesPerSector":512,"numberOfFreeClusters":2147483647})
 			print("Setting gain to %s"%(config['gain']))
 			edsdk.SetPropertyData(self.camera,PropID.ISOSpeed,0,getattr(ISOSpeedCamera,config['gain']))
 			print("Setting aperture to %s"%(config['aperture']))
@@ -129,6 +133,14 @@ class Canon:
 						if self.buildNumpyImage:
 								print("Ready to build numpy image") if verbose > 4 else None
 								self.buildNumpyFunction(object_handle)
+				if event == ObjectEvent.DirItemRequestTransfer:
+						print("Image Data in Camera RAM") if verbose > 4 else None
+						if self.copyPicture:
+								print("Ready to copy file from camera to Pictures directory") if verbose > 4 else None
+								self.copy_image(object_handle)
+						if self.buildNumpyImage:
+								print("Ready to build numpy image") if verbose > 4 else None
+								self.buildNumpyFunction(object_handle)
 		def copy_image(self,object_handle): 
 				fileExtension = 'cr2'
 				directory = path.join(self.config['basepath'],self.target,fileExtension.upper)
@@ -159,9 +171,8 @@ class Canon:
 				edsdk.DownloadComplete(object_handle)
 		def buildNumpyFunction(self,object_handle): 
 				dir_item_info = edsdk.GetDirectoryItemInfo(object_handle)
-				if True:
-					self.imageData = bytes(dir_item_info["size"]) 
-					self.memStream = edsdk.CreateMemoryStreamFromPointer(self.imageData)
+				self.imageData = bytes(dir_item_info["size"])
+				self.memStream = edsdk.CreateMemoryStreamFromPointer(self.imageData)
 				print("Note: ObjectFormat 10874880 = 0xA5F000 = Canon Raw") if verbose > 4 else None
 				print("Copying image data from camera SD card to RAM with size %s"%(dir_item_info["size"])) if verbose > 4 else None
 				edsdk.Download(object_handle,dir_item_info["size"],self.memStream)
