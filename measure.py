@@ -17,7 +17,7 @@ parser.add_argument('-t','--time')
 parser.add_argument('-c','--clock')
 parser.add_argument('-e','--ext')
 args = parser.parse_args()
-filemask = args.directory+'-'.join((args.object,args.sensor,args.lens,args.filter,args.illuminant,'gain'+args.gain,'F'+args.aperture,args.time,args.clock))+'.'+args.ext
+filemask = args.directory+'-'.join((args.object,args.sensor,args.lens,'F'+args.aperture,'gain'+args.gain,args.illuminant,args.filter,args.time,args.clock))+'.'+args.ext
 print("Looking for files that match filemask %s"%(filemask))
 filelist = glob.glob(filemask)
 print("Found %s files matching parameters"%(len(filelist)))
@@ -38,4 +38,5 @@ for filename in filelist:
 	print("Working on file %s"%(filename))
 	img = io.imread(filename)
 	img = img - median
-	print("Values range from %s to %s with a standard deviation of %s"%(np.min(img),np.max(img),round(np.std(img),2)))
+	print("After subtracting cube median, values range from %s to %s with a standard deviation of %s"%(np.min(img),np.max(img),round(np.std(img),2)))
+
