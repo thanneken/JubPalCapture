@@ -8,5 +8,5 @@ instance/
 test.txt
 *.swp
 
-/profiles/*.yaml
-/shotlists/*.txt
+profiles/
+shotlists/
