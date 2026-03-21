@@ -8,5 +8,5 @@ instance/
 test.txt
 *.swp
 
-profiles/
-shotlists/
+#profiles/
+#shotlists/
